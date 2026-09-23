@@ -132,6 +132,10 @@ class GameAgentRunner:
         if session_id in self.sessions:
             self.sessions[session_id] = []
 
+    def reset_session(self, session_id: str = "default") -> None:
+        """Alias for clear_session."""
+        self.clear_session(session_id=session_id)
+
     def route_intent(
         self,
         message: str,
@@ -213,6 +217,25 @@ class GameAgentRunner:
             "intent": "CHAT",
             "message": message,
         }
+
+    def run_dialogue(
+        self,
+        message: str,
+        user_id: Optional[str] = None,
+        session_id: str = "default",
+        category_filter: Optional[str] = None,
+        top_k: Optional[int] = None,
+        diversity_weight: float = 0.30,
+    ) -> AgentResponse:
+        """Alias for handle_message."""
+        return self.handle_message(
+            message=message,
+            user_id=user_id,
+            session_id=session_id,
+            category_filter=category_filter,
+            top_k=top_k,
+            diversity_weight=diversity_weight,
+        )
 
     def handle_message(
         self,
