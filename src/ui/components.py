@@ -568,9 +568,9 @@ def render_game_card(
     else:
         data = getattr(game, "__dict__", {})
 
-    asin = data.get("parent_asin", "N/A")
-    title = data.get("title", "Game Chưa Đặt Tên")
-    category = data.get("category", "Video Games")
+    asin = str(data.get("parent_asin") or "N/A")
+    title = str(data.get("title") or "Game Chưa Đặt Tên")
+    category = str(data.get("category") or data.get("main_category") or "Video Games")
     avg_rating = float(data.get("avg_rating", data.get("average_rating", 0.0)) or 0.0)
     rating_count = int(data.get("rating_number", 0) or 0)
     image_url = data.get("image_url") or data.get("main_image_url")
@@ -646,7 +646,7 @@ def render_game_card(
         f'<div class="game-card-wrapper">'
         f'<div class="poster-container">{rank_badge_html}{poster_html}</div>'
         f'<div>'
-        f'<div style="display:flex; justify-content:space-between; align-items:center;">{render_badge(category[:20], "cyan")}{price_html}</div>'
+        f'<div style="display:flex; justify-content:space-between; align-items:center;">{render_badge(str(category)[:20], "cyan")}{price_html}</div>'
         f'<div class="game-title-text" title="{html.escape(title)}">{html.escape(title)}</div>'
         f'<div class="meta-row">{render_rating_stars(avg_rating)}<span class="rating-count">({rating_count:,} đánh giá)</span></div>'
         f'</div>'
@@ -655,6 +655,7 @@ def render_game_card(
         f'</div>'
     )
     render_html(card_html)
+
 
 
 def render_games_grid(
@@ -738,12 +739,12 @@ def render_gamer_persona_card(analytics: Union[Dict[str, Any], Any]) -> None:
     else:
         data = getattr(analytics, "__dict__", {})
 
-    user_id = data.get("user_id", "Chưa xác định")
-    persona_raw = data.get("gamer_persona", "General Gamer")
-    total_reviews = data.get("total_interactions", 0)
-    avg_rating = data.get("average_rating", 0.0)
-    top_categories = data.get("top_categories", [])
-    rating_dist = data.get("rating_distribution", {})
+    user_id = str(data.get("user_id") or "Chưa xác định")
+    persona_raw = str(data.get("gamer_persona") or "General Gamer")
+    total_reviews = int(data.get("total_interactions", 0) or 0)
+    avg_rating = float(data.get("average_rating", 0.0) or 0.0)
+    top_categories = data.get("top_categories") or []
+    rating_dist = data.get("rating_distribution") or {}
 
     # Vietnamese Persona Mapping
     persona_vi_map = {
@@ -758,7 +759,7 @@ def render_gamer_persona_card(analytics: Union[Dict[str, Any], Any]) -> None:
     persona_display = persona_vi_map.get(persona_raw, f"🎮 {persona_raw}")
     avatar_icon = persona_display.split()[0] if persona_display else "🎮"
 
-    cats_html = " ".join([render_badge(c, "cyan") for c in top_categories[:4]])
+    cats_html = " ".join([render_badge(str(c)[:20], "cyan") for c in top_categories[:4]])
 
     dist_html = ""
     if rating_dist:
