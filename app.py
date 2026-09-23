@@ -27,6 +27,10 @@ if sys.stdout.encoding != "utf-8":
 # Add project root to sys.path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
+import importlib
+import src.ui.components
+importlib.reload(src.ui.components)
+
 from src.agent.agent_runner import GameAgentRunner
 from src.ui.components import (
     apply_custom_css,
