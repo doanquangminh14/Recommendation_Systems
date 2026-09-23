@@ -108,7 +108,7 @@ class RecommendedGameItem(GameItemBase):
 
 class GameItemDetail(GameItemBase):
     """Comprehensive game metadata for item detail view."""
-    description: Optional[str] = Field(default=None, description="Long-form game description")
+    description: Optional[Union[str, List[str]]] = Field(default=None, description="Long-form game description")
     features: Optional[List[str]] = Field(default_factory=list, description="Bullet points of key gameplay features")
     store: Optional[str] = Field(default=None, description="Store or publisher name")
     bought_together: Optional[List[str]] = Field(default_factory=list, description="List of frequently bought together ASINs")
