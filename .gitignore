@@ -6,4 +6,3 @@ venv/
 /models/
 *.joblib
 *.npy
-README.md
