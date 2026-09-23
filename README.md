@@ -9,120 +9,118 @@
   <img src="https://img.shields.io/badge/Tests-19%2F19%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white" alt="Tests Passing" />
 </p>
 
-> **Hệ Thống Gợi Ý & Trợ Lý Trò Chơi Điện Tử AI Toàn Diện (End-to-End Hybrid Recommender + NLP + AI Agent + FastAPI + Streamlit)**  
-> **Tập Dữ Liệu Nguồn:** *Amazon Reviews 2023 - Video Games (Review Interactions + Item Metadata)*.  
-> **Kiến Trúc Tổng Thể:** Medallion Data Lakehouse (Bronze $\rightarrow$ Silver $\rightarrow$ Gold) kết hợp Lọc Cộng Tác SVD, Vector Ngữ Nghĩa 384 Chiều, Phân Tích Cảm Xúc VADER, Bộ Xếp Hạng Đa Dạng Hóa MMR, Trích Xuất Giải Thích Đa Tín Hiệu & Trợ Lý AI Gaming Concierge.
+---
+
+## 📖 1. Giới Thiệu Dự Án (Project Overview)
+
+**AI-Powered Video Games Recommendation & Concierge System** là một hệ thống toàn diện (End-to-End) từ kỹ thuật dữ liệu lớn (Data Engineering), mô hình học máy gợi ý lai đa luồng (Hybrid Recommender Systems), xử lý ngôn ngữ tự nhiên (NLP), trợ lý AI đàm thoại thông minh (AI Agent), cho đến triển khai API chuẩn Production và giao diện Web tương tác hiện đại.
+
+Dự án được xây dựng dựa trên tập dữ liệu thực tế **Amazon Reviews 2023 (Video Games)** với hơn 800.000 tương tác đánh giá và hơn 25.000 tựa game.
+
+### 🎯 Bài toán & Mục tiêu giải quyết:
+1. **Khắc phục độ thưa dữ liệu (Data Sparsity ~99.96%):** Kết hợp phân rã ma trận ẩn (SVD Matrix Factorization) với không gian vector ngữ nghĩa 384 chiều từ mô hình Transformer.
+2. **Giải quyết vấn đề Người dùng mới (Cold-Start Problem):** Cho phép tìm kiếm và gợi ý game tức thì thông qua mô tả bằng ngôn ngữ tự nhiên (*Natural Language Semantic Search*) hoặc xây dựng chân dung sở thích động (*Dynamic User Profile Centroid*).
+3. **Phá vỡ vòng lặp thiên lệch (Filter Bubble / Echo Chamber):** Áp dụng thuật toán tái xếp hạng đa dạng hóa danh mục **MMR (Maximal Marginal Relevance)** và đo lường độ phân tán thể loại **ILD (Intra-List Diversity)**.
+4. **Minh bạch hóa mô hình AI (Explainable AI & Social Proof):** Cung cấp lời giải thích căn cứ đề xuất rõ ràng, chỉ ra tựa game mỏ neo truyền cảm hứng và trích dẫn đánh giá chân thực từ cộng đồng game thủ.
+5. **Trợ lý Gaming Concierge thông minh:** Tích hợp AI Agent có khả năng phân tích ý định (Intent Routing), ghi nhớ ngữ cảnh đàm thoại nhiều lượt và tự động kích hoạt các công cụ gợi ý, giải thích, phân tích hồ sơ game thủ.
 
 ---
 
-## 🌟 Điểm Nhấn & Tính Năng Cốt Lõi (Key Highlights)
-
-- ⚡ **Xử Lý Dữ Liệu Tốc Độ Cao Bằng Polars (Rust Multi-Threaded):**
-  - Thuật toán **K-Core Filtering ($k=5$)** hội tụ chỉ sau 7 vòng lặp trong **8.5 giây** trên hàng triệu dòng dữ liệu.
-  - Tách và xuất 3 tập dữ liệu Silver Parquet nén `zstd`: **814,586 tương tác sạch, 25,612 tựa game đầy đủ metadata, và 137,127 poster ảnh bìa game chất lượng cao**.
-- 🧠 **Mô Hình Gợi Ý Lai Đa Luồng (Weighted Hybrid Fusion):**
-  - **Lọc Cộng Tác (Collaborative Filtering):** TruncatedSVD ($k=64$ chiều latent) nắm bắt sở thích ẩn và phân cụm K-Means.
-  - **Lọc Dựa Trên Nội Dung (Semantic Content-Based):** Vector hóa mô tả và thể loại game sang không gian 384 chiều bằng `Sentence-Transformers (all-MiniLM-L6-v2)`.
-  - **Phân Tích Cảm Xúc (NLP Sentiment Analysis):** VADER Sentiment Scoring tổng hợp tỷ lệ đánh giá tích cực và câu trích dẫn review chân thực (`social_proof_quote`).
-- 🎯 **Giải Quyết Triệt Để Vấn Đề Người Dùng Mới (Cold-Start Solutions):**
-  - **Dynamic User Profile Centroid:** Tự động tổng hợp vector trọng tâm sở thích từ các game người dùng vừa tương tác.
-  - **Zero-Shot Natural Language Discovery:** Cho phép game thủ tìm kiếm game bằng câu miêu tả ngôn ngữ tự nhiên (ví dụ: *"Game RPG thế giới mở mang phong cách Dark Souls thử thách cao"*).
-- 🔀 **Đa Dạng Hóa Danh Mục & Hạn Chế Thiên Lệch (MMR & Intra-List Diversity):**
-  - Tích hợp thuật toán **Maximal Marginal Relevance (MMR)** cân bằng giữa độ chính xác và độ phong phú thể loại qua tham số $\lambda$.
-  - Tính toán chỉ số đo lường đa dạng danh mục **Intra-List Diversity (ILD)** theo thời gian thực.
-- 🔍 **Giải Thích Đề Xuất Minh Bạch & Dẫn Chứng Thực Tế (Explainability & Social Proof):**
-  - Tự động chỉ ra tựa game mỏ neo truyền cảm hứng (*"Lấy cảm hứng từ: Skyrim (92%)"*), tỷ lệ trùng khớp thể loại, và trích dẫn câu review thực tế từ người chơi đã trải nghiệm.
-- 🤖 **Trợ Lý Trò Chuyện Thông Minh AI Gaming Concierge (Multi-Turn AI Agent):**
-  - Điều phối 3 công cụ chuyên sâu (`RecommendTool`, `ExplainTool`, `AnalyticsTool`).
-  - Ghi nhớ ngữ cảnh hội thoại đa lượt, tự động phân tích chân dung game thủ (**Gamer Persona**) và nhúng trực tiếp thẻ game trực quan vào bong bóng chat.
-- 🚀 **Dual Frontend & Backend Chuẩn Production:**
-  - **FastAPI REST Server:** 11 RESTful endpoints chuẩn Pydantic v2 với Singleton Lifespan loader và In-Memory RAM Caching.
-  - **Streamlit Cyber Gaming UI:** Giao diện tối tương phản cao, phong cách Glassmorphism Cyberpunk, hỗ trợ 100% Tiếng Việt thân thiện.
-
----
-
-## 🏗️ Kiến Trúc Hệ Thống (System Architecture)
+## ✨ 2. Tính Năng Nổi Bật (Key Features)
 
 ```
-                              AMAZON REVIEWS 2023
-                                  VIDEO GAMES
-                                       │
-                     ┌─────────────────┴─────────────────┐
-                     │                                   │
-              REVIEW INTERACTIONS                    ITEM METADATA
-                     │                                   │
-                     ▼                                   ▼
-             BRONZE RAW LAYER                    BRONZE RAW LAYER
-                     │                                   │
-                     └───────────────┬───────────────────┘
-                                     ▼
-                      POLARS K-CORE FILTERING (k=5)
-                                     │
-                                     ▼
-                      SILVER CLEAN PARQUET DATASET
-                                     │
-              ┌──────────────────────┼──────────────────────┐
-              │                      │                      │
-              ▼                      ▼                      ▼
-        Interactions           Item Features           Review Text
-        (814,586 rows)         (25,612 items)               │
-              │                      │                      ▼
-              │                      │            NLP SENTIMENT & EMBEDDINGS
-              │                      │                      │
-              │                      │             ┌────────┴────────┐
-              │                      │             ▼                 ▼
-              │                      │       VADER Sentiment   MiniLM-L6 (384-d)
-              │                      │             │                 │
-              │                      ▼             └────────┬────────┘
-              │               Content-Based                 │
-              │              Semantic Matrix                ▼
-              ▼                      │               GOLD VECTOR INDEX
-       Collaborative                 │               (25,612 x 384 npy)
-       SVD (k=64)                    │                      │
-              │                      │                      │
-              └──────────────┬───────┴──────────────────────┘
-                             ▼
-                 WEIGHTED HYBRID ENGINE
-                             │
-                             ▼
-                MMR DIVERSITY RE-RANKING (ILD)
-                             │
-              ┌──────────────┴──────────────┐
-              ▼                             ▼
-       Recommendations             Multi-Signal Explainer
-              │                             │
-              └──────────────┬──────────────┘
-                             ▼
-               AI AGENT CORE & TOOL ROUTING
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-        RecommendTool   ExplainTool   AnalyticsTool
-              │              │              │
-              └──────────────┼──────────────┘
-                             ▼
-                FASTAPI RESTFUL BACKEND (Port 8000)
-                             │
-                             ▼
-               STREAMLIT CYBER GAMING UI (Port 8501)
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │                           4 TRỤ CỘT CỐT LÕI CỦA DỰ ÁN                       │
+  ├───────────────────────┬─────────────────────────┬───────────────────────────┤
+  │ 🧠 Hybrid ML Engine   │ 🔀 MMR Diversity        │ 🤖 AI Gaming Concierge    │
+  │ • SVD (k=64 latent)   │ • Cân bằng Độ chính xác │ • Đàm thoại đa lượt       │
+  │ • MiniLM-L6 (384-d)   │   và Độ phong phú (λ)   │ • Tự động kích hoạt Tool  │
+  │ • VADER Sentiment     │ • Đo lường ILD Index    │ • Phân tích Gamer Persona │
+  └───────────────────────┴─────────────────────────┴───────────────────────────┘
+```
+
+- ⚡ **Xử lý dữ liệu tốc độ cao với Polars (Rust Multi-threading):** Thuật toán Lọc K-Core ($k=5$) xử lý hàng triệu bản ghi trong chưa đầy 9 giây, xuất 3 tập dữ liệu Silver Parquet nén `zstd`.
+- 🎮 **Mô hình Gợi ý Lai Đa Luồng (Weighted Hybrid Fusion):** Kết hợp linh hoạt giữa Lọc cộng tác (Collaborative Filtering), Lọc theo nội dung ngữ nghĩa (Semantic Content-Based) và Điểm cảm xúc đánh giá (VADER Sentiment).
+- 🔍 **Giải thích đề xuất minh bạch (Multi-Signal Explainer):** Tự động phát hiện tựa game mỏ neo (*"Lấy cảm hứng từ: Skyrim (92%)"*), phân tích mức độ tương đồng cốt truyện và trích dẫn nhận xét thực tế từ người chơi.
+- 🧙‍♂️ **Phân tích chân dung game thủ (Gamer Persona & Analytics):** Tự động gán danh hiệu phong cách chơi (*Bậc Thầy Chiến Thuật, Thợ Săn Thử Thách, Chiến Binh Sinh Tồn...*) cùng biểu đồ phân bố rating $1\star \rightarrow 5\star$.
+- 🚀 **Kiến trúc Kép Chuẩn Production:** 
+  - **FastAPI Backend:** 11 RESTful endpoints chuẩn Pydantic v2, nạp mô hình Single-load siêu tốc vào RAM.
+  - **Streamlit Web UI:** Giao diện Cyber Gaming Dark Mode, hỗ trợ 100% Tiếng Việt, hiển thị thẻ game và poster sống động.
+
+---
+
+## 🏗️ 3. Kiến Trúc Hệ Thống (System Architecture)
+
+```
+                            AMAZON REVIEWS 2023 - VIDEO GAMES
+                                            │
+                     ┌──────────────────────┴──────────────────────┐
+                     ▼                                             ▼
+          User Review Interactions                           Item Metadata
+                     │                                             │
+                     └──────────────────────┬──────────────────────┘
+                                            ▼
+                             POLARS K-CORE FILTERING (k=5)
+                                            │
+                                            ▼
+                               SILVER DATA LAKEHOUSE (Parquet)
+                     ┌──────────────────────┼──────────────────────┐
+                     ▼                      ▼                      ▼
+               Interactions           Item Features           Review Text
+              (814,586 rows)         (25,612 games)                │
+                     │                      │                      ▼
+                     │                      │             NLP FEATURE EXTRACTION
+                     │                      │          ┌───────────┴───────────┐
+                     │                      │          ▼                       ▼
+                     │                      │   VADER Sentiment         all-MiniLM-L6-v2
+                     │                      │   (Positive Ratio)       (384-d Dense Vec)
+                     │                      │          │                       │
+                     ▼                      ▼          ▼                       ▼
+             Collaborative SVD         Content-Based Engine            GOLD VECTOR INDEX
+             (k=64 Latent Dim)          (Semantic Matrix)             (25,612 x 384 npy)
+                     │                          │                              │
+                     └──────────────────┬───────┴──────────────────────────────┘
+                                        ▼
+                            WEIGHTED HYBRID ENGINE
+                                        │
+                                        ▼
+                           MMR DIVERSITY RE-RANKING (ILD)
+                                        │
+                         ┌──────────────┴──────────────┐
+                         ▼                             ▼
+                  Recommendations             Multi-Signal Explainer
+                         │                             │
+                         └──────────────┬──────────────┘
+                                        ▼
+                           AI AGENT CORE & INTENT ROUTING
+                         ┌──────────────┼──────────────┐
+                         ▼              ▼              ▼
+                   RecommendTool   ExplainTool   AnalyticsTool
+                         │              │              │
+                         └──────────────┼──────────────┘
+                                        ▼
+                           FASTAPI REST SERVER (Port 8000)
+                                        │
+                                        ▼
+                         STREAMLIT CYBER GAMING UI (Port 8501)
 ```
 
 ---
 
-## 📊 Thống Kê Dữ Liệu Sau Xử Lý (Data Lakehouse Telemetry)
+## 📊 4. Thống Kê Dữ Liệu Sau Xử Lý (Data Lakehouse Telemetry)
 
-| Tầng Dữ Liệu | Đường Dẫn File | Dung Lượng | Số Lượng Bản Ghi | Chi Tiết Kỹ Thuật |
+| Tầng Dữ Liệu | Đường Dẫn File | Dung Lượng | Số Lượng Bản Ghi | Đặc Điểm Kỹ Thuật |
 | :--- | :--- | :--- | :--- | :--- |
 | **Silver Interactions** | `data/silver/interactions.parquet` | 8.45 MB | **814,586** tương tác | Lọc K-Core ($k=5$), độ thưa $99.966\%$ |
 | **Silver Item Metadata** | `data/silver/item_features.parquet` | 14.57 MB | **25,612** tựa game | Title, Category, Rating, Price |
-| **Silver Item Images** | `data/silver/item_images.parquet` | 8.49 MB | **137,127** ảnh game | Poster URL độ nét cao |
-| **Silver Review Sentiment** | `data/silver/item_sentiment.parquet` | 0.85 MB | **25,612** game profiles | Tỷ lệ tích cực %, điểm compound |
-| **Gold Item Vectors** | `data/gold/item_embeddings.npy` | 37.52 MB | **25,612 $\times$ 384** | Dense float32 semantic matrix |
-| **Collaborative Model** | `models/collaborative/svd_recommender.joblib` | 46.80 MB | $k=64$ latent components | TruncatedSVD Matrix Factorization |
+| **Silver Item Images** | `data/silver/item_images.parquet` | 8.49 MB | **137,127** ảnh bìa | Link Poster chất lượng cao |
+| **Silver Review Sentiment**| `data/silver/item_sentiment.parquet`| 0.85 MB | **25,612** game profiles | Tỷ lệ đánh giá tích cực %, điểm compound |
+| **Gold Item Vectors** | `data/gold/item_embeddings.npy` | 37.52 MB | **25,612 $\times$ 384** | Ma trận vector ngữ nghĩa float32 |
+| **Collaborative Model** | `models/collaborative/svd_recommender.joblib` | 46.80 MB | $k=64$ chiều ẩn | Mô hình TruncatedSVD nén |
 
 ---
 
-## 📁 Cấu Trúc Mã Nguồn Dự Án (Project Structure)
+## 📁 5. Cấu Trúc Thư Mục Dự Án (Repository Structure)
 
 ```text
 Recommendation_Systems/
@@ -130,129 +128,108 @@ Recommendation_Systems/
 │   └── config.toml                  # Cấu hình giao diện Dark Gaming Cyberpunk cho Streamlit
 ├── data/
 │   ├── bronze/                      # Dữ liệu thô gốc (JSONL)
-│   ├── silver/                      # Dữ liệu sạch Parquet (interactions, item_features, images, sentiment)
+│   ├── silver/                      # Dữ liệu sạch Parquet (interactions, features, images, sentiment)
 │   └── gold/                        # Vector embeddings 384 chiều (.npy) & item profiles
 ├── models/
 │   └── collaborative/               # SVD model đã huấn luyện (.joblib)
-├── notebook/                        # Jupyter Notebooks nghiên cứu & thử nghiệm thuật toán
-│   ├── undertand_data.ipynb         # Phase 1: Phân tích phân bố & khám phá dữ liệu thô
+├── notebook/                        # Chuỗi 7 Jupyter Notebooks phân tích & thử nghiệm
+│   ├── 01_undertand_data.ipynb      # Phase 1: EDA & Khám phá phân phối dữ liệu Bronze
 │   ├── 02_clean_silver.ipynb        # Phase 2: K-Core filtering bằng Polars
-│   ├── 03_nlp_sentiment_embeddings.ipynb # Phase 3: Thử nghiệm VADER & Sentence-Transformers
+│   ├── 03_nlp_sentiment_embeddings.ipynb # Phase 3: VADER Sentiment & Sentence-Transformers
 │   ├── 04_collaborative_filtering.ipynb  # Phase 4: SVD Matrix Factorization & K-Means
-│   ├── 05_content_based.ipynb       # Phase 5: Content-Based Cosine Similarity
+│   ├── 05_content_based.ipynb       # Phase 5: Content-Based Cosine Similarity & Profile Centroid
 │   ├── 06_hybrid_recommender.ipynb  # Phase 6: Hybrid Fusion, MMR Ranking & Explanations
 │   └── 07_ai_agent.ipynb            # Phase 7: AI Agent Tools & Multi-turn Dialogue
 ├── src/                             # Mã nguồn chuẩn Production Modularization
-│   ├── data/                        # Modules xử lý, trích xuất ảnh và làm sạch dữ liệu
-│   │   ├── extract_images.py        # Trích xuất poster ảnh bìa game chất lượng cao
-│   │   └── clean_silver.py          # Lọc K-Core & xuất 3 tập Silver Parquet nén ZSTD
-│   ├── nlp/                         # Modules xử lý ngôn ngữ tự nhiên
-│   │   ├── sentiment.py             # Trích xuất điểm cảm xúc VADER & tổng hợp item sentiment
-│   │   └── embeddings.py            # Trích xuất vector ngữ nghĩa all-MiniLM-L6-v2 384 chiều
-│   ├── models/                      # Modules thuật toán gợi ý cốt lõi
-│   │   ├── collaborative/           # SVD Matrix Factorization & K-Means Clusters
-│   │   ├── content_based/           # Semantic Content-Based & Dynamic User Profile Centroid
-│   │   ├── hybrid/                  # Weighted Hybrid Fusion Engine & Multi-Signal Explainer
-│   │   └── ranking.py               # Thuật toán MMR Diversity Re-ranking & Đo lường ILD
-│   ├── agent/                       # Hệ thống AI Agent & Công cụ điều phối
-│   │   ├── tools/                   # RecommendTool, ExplainTool, AnalyticsTool
-│   │   └── agent_runner.py          # AI Agent Core, Intent Routing & Multi-turn Session Memory
-│   ├── ui/                          # Hệ thống giao diện Streamlit Cyber Gaming
-│   │   └── components.py            # Component Thẻ Game, Poster, Persona Card, Chat Bubbles (100% Tiếng Việt)
-│   └── api/                         # FastAPI RESTful Backend
-│       ├── schemas.py               # Pydantic Schemas & DTOs chuẩn hóa
-│       ├── routes.py                # 11 RESTful Endpoints
-│       └── main.py                  # FastAPI Application Entry & Singleton Lifespan loader
-├── tests/                           # Bộ kiểm thử tự động toàn diện
-│   ├── test_api.py                  # Kiểm thử 11/11 REST Endpoints FastAPI
-│   ├── test_ui_components.py        # Kiểm thử 10/10 UI Components
-│   ├── test_app.py                  # Kiểm thử tích hợp tài nguyên Streamlit
-│   └── test_e2e_integration.py      # Kiểm thử toàn vẹn E2E xuyên suốt toàn bộ hệ thống
+│   ├── data/                        # Trích xuất ảnh bìa & tiền xử lý dữ liệu sạch
+│   ├── nlp/                         # Xử lý cảm xúc VADER & Vector hóa văn bản
+│   ├── models/                      # Các mô hình Collaborative, Content-Based, Hybrid & MMR
+│   ├── agent/                       # Trợ lý AI Concierge, Intent Routing & Bộ nhớ phiên
+│   ├── ui/                          # Thư viện UI Components (Glassmorphism, 100% Tiếng Việt)
+│   └── api/                         # FastAPI REST Endpoints & Schemas chuẩn Pydantic v2
+├── tests/                           # Bộ kiểm thử tự động toàn diện (19/19 Tests Pass)
 ├── app.py                           # Ứng dụng Giao diện Web tương tác Streamlit
-├── main.py                          # CLI Launcher trung tâm (API, UI, Tests)
+├── main.py                          # CLI Launcher trung tâm (UI, API, Tests)
 ├── requirements.txt                 # Danh mục thư viện phụ thuộc
-└── README.md                        # Tài liệu dự án hoàn chỉnh
+└── README.md                        # Tài liệu hướng dẫn dự án
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Khởi Chạy (Quick Start Guide)
+## 🚀 6. Hướng Dẫn Cài Đặt & Khởi Chạy (Quick Start)
 
-### 1. Cài đặt môi trường Python
-Yêu cầu: **Python $\ge$ 3.10** (Khuyến nghị Python 3.11).
+### ⚙️ Bước 1: Cài đặt môi trường Python
+> Yêu cầu: **Python $\ge$ 3.10** (Khuyến nghị Python 3.11).
 
 ```bash
-# Clone repository
+# 1. Clone repository về máy
 git clone https://github.com/doanquangminh14/Recommendation_Systems.git
 cd Recommendation_Systems
 
-# Cài đặt toàn bộ thư viện cần thiết
+# 2. Tạo môi trường ảo (tùy chọn)
+python -m venv venv
+venv\Scripts\activate      # Trên Windows
+# source venv/bin/activate # Trên Linux / macOS
+
+# 3. Cài đặt các thư viện phụ thuộc
 pip install -r requirements.txt
 pip install fastapi uvicorn streamlit
 ```
 
-### 2. Khởi chạy Ứng dụng Giao diện Web (Streamlit UI)
+---
+
+### 🎮 Bước 2: Khởi chạy Giao diện Web Streamlit (Khuyên dùng)
 ```bash
 python main.py --mode ui
-# Hoặc: python main.py --ui
 ```
-> 🌐 Mở trình duyệt tại: **http://localhost:8501**
+🌐 **Mở trình duyệt truy cập:** `http://localhost:8501`
 
-### 3. Khởi chạy Máy chủ API Backend (FastAPI REST Server)
+**Trải nghiệm 3 phân hệ trực quan:**
+1. **Tab 1 - Gợi Ý Cá Nhân Hóa:** Chọn hồ sơ game thủ mẫu hoặc nhập User ID, xem thẻ Persona, tinh chỉnh số lượng game, bật/tắt chế độ đa dạng hóa MMR ($\lambda$) và xem thẻ game kèm điểm giải thích.
+2. **Tab 2 - Trò Chuyện Cùng Trợ Lý AI:** Đàm thoại tự nhiên với AI Gaming Concierge, bấm các câu hỏi gợi ý nhanh hoặc yêu cầu đề xuất/giải thích game theo ý muốn.
+3. **Tab 3 - Tra Cứu Kho Dữ Liệu:** Tìm kiếm nhanh theo tên hoặc lọc theo thể loại trong kho 25.612 tựa game.
+
+---
+
+### ⚡ Bước 3: Khởi chạy Máy chủ API RESTful (FastAPI Backend)
 ```bash
-python main.py --mode api
-# Hoặc: python main.py --api --port 8000
+python main.py --mode api --port 8000
 ```
-> 📖 **OpenAPI Swagger UI:** http://127.0.0.1:8000/docs  
-> 📚 **ReDoc Documentation:** http://127.0.0.1:8000/redoc  
-> 🔍 **Health Check:** http://127.0.0.1:8000/health  
+- 📖 **OpenAPI Swagger UI (Tương tác trực tiếp):** `http://127.0.0.1:8000/docs`
+- 📚 **ReDoc Documentation:** `http://127.0.0.1:8000/redoc`
+- 🔍 **Kiểm tra sức khỏe hệ thống (Health Check):** `http://127.0.0.1:8000/health`
 
-### 4. Thực thi Bộ Kiểm Thử Tự Động Toàn Hệ Thống (E2E Test Suite)
+---
+
+### 🧪 Bước 4: Chạy Toàn Bộ Kiểm Thử Tự Động (Test Suite)
 ```bash
 python main.py --mode test
-# Hoặc: python main.py --test
 ```
-> ✅ Thực thi đồng thời toàn bộ bài test: **Unit Tests, API TestClient, UI Component Tests và E2E Integration (19/19 Test Cases Passed 100%)**.
+> ✅ Thực thi đồng loạt toàn bộ bài test: **Unit Tests, API TestClient, UI Components và E2E Integration (19/19 Test Cases Passed 100%)**.
 
 ---
 
-## 📡 Danh Mục API Endpoints (FastAPI RESTful API)
+## 📡 7. Danh Mục API Endpoints (FastAPI REST Backend)
 
-| Phương Thức | Đường Dẫn Endpoint | Mô Tả Chức Năng | Request Payload Chính |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/health` | Kiểm tra trạng thái sẵn sàng của toàn bộ mô hình ML | N/A |
-| `GET` | `/api/stats` | Thống kê số lượng game, users, interactions, vector dimensions | N/A |
-| `GET` | `/api/categories` | Lấy danh sách toàn bộ các thể loại game trong kho dữ liệu | N/A |
-| `POST` | `/api/recommend/personalized` | Gợi ý game cá nhân hóa (Hybrid + MMR Re-ranking) | `user_id`, `top_k`, `use_mmr`, `diversity_lambda` |
-| `POST` | `/api/recommend/semantic` | Tìm kiếm & đề xuất game theo mô tả ngôn ngữ tự nhiên | `query`, `top_k`, `filter_category`, `min_rating` |
-| `POST` | `/api/recommend/similar` | Tìm kiếm game có lối chơi và cốt truyện tương đồng | `item_id`, `top_k`, `filter_category` |
-| `POST` | `/api/explain` | Giải thích chi tiết lý do AI đề xuất một tựa game | `user_id`, `item_id` |
-| `GET` | `/api/user/{user_id}/analytics` | Phân tích lịch sử đánh giá và chân dung Gamer Persona | URL path parameter `user_id` |
-| `POST` | `/api/agent/chat` | Hội thoại đa lượt tương tác với Trợ lý AI Gaming Concierge | `message`, `user_id`, `session_id`, `reset_session` |
-| `GET` | `/api/search` | Tìm kiếm game theo từ khóa và phân trang | Query params `q`, `category`, `limit`, `offset` |
-| `GET` | `/api/games/{asin}` | Lấy thông tin chi tiết, điểm cảm xúc & tính năng của game | URL path parameter `asin` |
-
----
-
-## 🎨 Trải Nghiệm Giao Diện Người Dùng (Streamlit Web Application)
-
-1. **Tab 1: 🎯 Gợi Ý Cá Nhân Hóa & Khám Phá Game:**
-   - Chọn Game thủ mẫu hoặc nhập User ID để khám phá danh sách game tối ưu theo gu sở thích.
-   - Thẻ Chân Dung Game Thủ (**Gamer Persona**) hiển thị danh hiệu (*🧙‍♂️ Bậc Thầy Chiến Thuật & RPG, 🗡️ Game Thủ Phiêu Lưu...*) kèm biểu đồ phân bố sao đánh giá $1\star \rightarrow 5\star$.
-   - Tinh chỉnh số lượng game đề xuất, bật tắt cơ chế đa dạng hóa danh mục (**MMR Re-ranking**) và điều chỉnh thanh trượt $\lambda$.
-   - Thẻ Game Responsive tích hợp Poster chất lượng cao, thanh đo lường **Độ Phù Hợp Gu Chơi (%)**, điểm phân rã (*CF, Content-Based, Sentiment*) và câu trích dẫn review xác thực từ game thủ.
-2. **Tab 2: 🤖 Trò Chuyện Cùng Trợ Lý AI (Gaming Concierge):**
-   - Hỗ trợ lưu nhớ ngữ cảnh đàm thoại qua nhiều lượt chat liên tiếp.
-   - Hệ thống 5 nút gợi ý câu hỏi nhanh thuần Việt: *🎯 Top Game Gợi Ý, 🗡️ Dark Fantasy RPG, 🔍 Giải Thích Game, 📊 Hồ Sơ Game Thủ, 🕹️ Cozy / Pixel Art*.
-   - Tự động nhúng trực quan danh sách Game Cards và thẻ giải thích ngay dưới câu trả lời của AI Concierge.
-3. **Tab 3: 📊 Phân Tích Chân Dung & Tra Cứu Kho Game:**
-   - Tra cứu nhanh chóng trong kho **25,612 tựa game**, lọc theo thể loại và xem chi tiết đánh giá cộng đồng.
+| Phương Thức | Endpoint | Mô Tả Chức Năng | Tham Số / Request Body Chính |
+| :---: | :--- | :--- | :--- |
+| `GET` | `/health` | Kiểm tra trạng thái sẵn sàng của các mô hình | Không |
+| `GET` | `/api/stats` | Thống kê số lượng game, user, tương tác và vector | Không |
+| `GET` | `/api/categories` | Lấy danh sách toàn bộ các thể loại game | Không |
+| `POST`| `/api/recommend/personalized` | Gợi ý game cá nhân hóa (Hybrid + MMR) | `{"user_id": "...", "top_k": 10, "use_mmr": true, "diversity_lambda": 0.7}` |
+| `POST`| `/api/recommend/semantic` | Tìm kiếm theo mô tả ngôn ngữ tự nhiên | `{"query": "game bắn súng sinh tồn", "top_k": 5}` |
+| `POST`| `/api/recommend/similar` | Gợi ý các tựa game tương đồng (Item-to-Item) | `{"item_id": "...", "top_k": 5}` |
+| `POST`| `/api/explain` | Giải thích lý do đề xuất một tựa game | `{"user_id": "...", "item_id": "..."}` |
+| `GET` | `/api/user/{user_id}/analytics` | Phân tích chân dung Gamer Persona & Lịch sử | Path param: `user_id` |
+| `POST`| `/api/agent/chat` | Đàm thoại đa lượt cùng Trợ lý AI Concierge | `{"message": "Gợi ý game RPG cho tôi", "user_id": "..."}` |
+| `GET` | `/api/search` | Tìm kiếm game theo từ khóa & phân trang | Query params: `q`, `category`, `limit`, `offset` |
+| `GET` | `/api/games/{asin}` | Lấy thông tin chi tiết và điểm cảm xúc của game | Path param: `asin` |
 
 ---
 
-## 👨‍💻 Tác Giả & Bản Quyền
+## 👨‍💻 8. Tác Giả & Bản Quyền
 
 - **Tác giả:** Đoàn Quang Minh
-- **GitHub Repository:** [Recommendation_Systems](https://github.com/doanquangminh14/Recommendation_Systems)
-- **Công nghệ cốt lõi:** Python, Polars, HuggingFace Transformers, Scikit-learn, FastAPI, Streamlit, PyArrow, VADER Sentiment.
-- **Giấy phép:** MIT License.
+- **GitHub Repository:** [doanquangminh14/Recommendation_Systems](https://github.com/doanquangminh14/Recommendation_Systems)
+- **Công nghệ cốt lõi:** Python, Polars, Sentence-Transformers, Scikit-learn, FastAPI, Streamlit, PyArrow, VADER Sentiment.
+- **Giấy phép phát hành:** MIT License.
