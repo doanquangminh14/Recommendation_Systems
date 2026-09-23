@@ -5,13 +5,14 @@ Provides a rich, modern, glassmorphic gaming design system with reusable Streaml
 - Dark cyber-gaming aesthetics (Neon cyan, purple, amber accents)
 - Game Cards with high-res posters, multi-signal scores & reason badges
 - Dynamic Explanation Panels & Social Proof Review Quotes
-- Gamer Persona & Analytics Profile Cards
-- Conversational AI Agent Chat Bubbles with embedded tool telemetry
+- Gamer Persona & Behavioral Analytics
+- Conversational AI Gaming Agent with Multi-turn Memory & Tool Telemetry
 - Glassmorphic KPI Metric Cards & Telemetry Badges
 """
 
 from typing import List, Dict, Optional, Any, Union
 import html
+import textwrap
 import streamlit as st
 
 
@@ -21,7 +22,6 @@ import streamlit as st
 
 CUSTOM_CSS = """
 <style>
-/* --- Google Fonts Import --- */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
@@ -43,22 +43,23 @@ CUSTOM_CSS = """
     --font-body: 'Outfit', sans-serif;
 }
 
-/* --- Global Overrides & Typography --- */
-html, body, [class*="css"] {
+/* Global App Dark Theme Overrides */
+.stApp {
+    background-color: var(--bg-dark);
     font-family: var(--font-body);
     color: var(--text-primary);
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
+    font-family: var(--font-heading) !important;
     letter-spacing: 0.5px;
     font-weight: 700;
 }
 
-/* --- Hero Banner & Header --- */
+/* Hero Banner & Header */
 .hero-header-container {
     background: linear-gradient(135deg, rgba(127, 0, 255, 0.15) 0%, rgba(0, 242, 254, 0.12) 100%);
-    border: 1px solid rgba(0, 242, 254, 0.2);
+    border: 1px solid rgba(0, 242, 254, 0.25);
     border-radius: 16px;
     padding: 24px 30px;
     margin-bottom: 24px;
@@ -66,17 +67,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     position: relative;
     overflow: hidden;
-}
-
-.hero-header-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(0, 242, 254, 0.05) 0%, transparent 70%);
-    pointer-events: none;
 }
 
 .hero-title {
@@ -103,7 +93,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 14px;
 }
 
-/* --- Glassmorphic KPI Metric Card --- */
+/* Glassmorphic KPI Metric Card */
 .kpi-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -147,7 +137,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 4px;
 }
 
-/* --- Game Card Component --- */
+/* Game Card Component */
 .game-card-wrapper {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -256,7 +246,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.78rem;
 }
 
-/* --- Badges & Pills --- */
+/* Badges & Pills */
 .badge-pill {
     display: inline-flex;
     align-items: center;
@@ -299,7 +289,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(255, 77, 109, 0.3);
 }
 
-/* --- Score Progress Bar --- */
+/* Score Progress Bar */
 .score-bar-container {
     background: rgba(255, 255, 255, 0.06);
     border-radius: 8px;
@@ -324,7 +314,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
 }
 
-/* --- Explanation & Social Proof Quote --- */
+/* Explanation & Social Proof Quote */
 .explanation-box {
     background: rgba(15, 23, 42, 0.6);
     border-left: 3px solid var(--accent-cyan);
@@ -346,18 +336,6 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
 }
 
-.quote-bubble::before {
-    content: '“';
-    font-family: Georgia, serif;
-    font-size: 2.2rem;
-    color: var(--accent-cyan);
-    opacity: 0.3;
-    position: absolute;
-    top: -8px;
-    left: 6px;
-    line-height: 1;
-}
-
 .quote-author {
     font-style: normal;
     font-size: 0.72rem;
@@ -366,7 +344,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: right;
 }
 
-/* --- Persona & Analytics Card --- */
+/* Persona & Analytics Card */
 .persona-card {
     background: linear-gradient(135deg, rgba(24, 32, 54, 0.85) 0%, rgba(13, 18, 30, 0.9) 100%);
     border: 1px solid rgba(127, 0, 255, 0.3);
@@ -409,7 +387,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--accent-cyan);
 }
 
-/* --- Chat Bubbles --- */
+/* Chat Bubbles */
 .chat-bubble-user {
     background: linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.1) 100%);
     border: 1px solid rgba(0, 242, 254, 0.3);
@@ -447,7 +425,7 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 12px;
 }
 
-/* --- Custom Scrollbar --- */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -467,24 +445,26 @@ h1, h2, h3, h4, h5, h6 {
 
 
 # ============================================================================
-# Helper Formatters & Renderers
+# Safe HTML Renderer (Prevents 4-space code block interpretation in Markdown)
 # ============================================================================
+
+def render_html(raw_html: str) -> None:
+    """
+    Renders HTML safely in Streamlit by stripping leading line indentation
+    so CommonMark/Markdown does not interpret lines as indented code blocks.
+    """
+    cleaned_lines = [line.strip() for line in raw_html.strip().splitlines() if line.strip()]
+    st.markdown("".join(cleaned_lines), unsafe_allow_html=True)
+
 
 def apply_custom_css() -> None:
     """Injects custom CSS design system into the active Streamlit app."""
-    st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+    render_html(CUSTOM_CSS)
 
 
 def render_rating_stars(rating: float, max_stars: int = 5) -> str:
     """
     Renders visual gold star ratings (e.g. ★★★★☆ 4.5).
-    
-    Args:
-        rating: Floating point rating (e.g. 4.7).
-        max_stars: Maximum number of stars (default 5).
-        
-    Returns:
-        HTML formatted string with stars and score.
     """
     try:
         r = float(rating)
@@ -506,14 +486,6 @@ def render_rating_stars(rating: float, max_stars: int = 5) -> str:
 def render_badge(text: str, color_type: str = "cyan", icon: Optional[str] = None) -> str:
     """
     Renders a styled neon badge pill.
-    
-    Args:
-        text: Badge label.
-        color_type: One of 'cyan', 'purple', 'emerald', 'amber', 'coral'.
-        icon: Optional emoji or character icon.
-        
-    Returns:
-        HTML string.
     """
     icon_html = f"<span>{icon}</span> " if icon else ""
     safe_text = html.escape(str(text))
@@ -531,11 +503,6 @@ def render_header(
 ) -> None:
     """
     Renders a futuristic cyber-gaming hero header with real-time telemetry pills.
-    
-    Args:
-        title: Main title of the application.
-        subtitle: Secondary descriptive tagline.
-        stats: Optional dictionary containing telemetry (e.g. total_games, total_users).
     """
     badges_html = ""
     if stats:
@@ -544,24 +511,21 @@ def render_header(
         total_reviews = stats.get("total_interactions", 814586)
         status_str = stats.get("status", "Online")
 
-        badges_html = f"""
-        <div class="telemetry-badges-row">
-            {render_badge(f"Status: {status_str}", "emerald", "🟢")}
-            {render_badge(f"{total_games:,} Games Active", "cyan", "🎮")}
-            {render_badge(f"{total_users:,} Verified Gamers", "purple", "👥")}
-            {render_badge(f"{total_reviews:,} Amazon Reviews", "amber", "⭐")}
-            {render_badge("Dense 384-d Vectors", "coral", "🧠")}
-        </div>
-        """
+        b1 = render_badge(f"Status: {status_str}", "emerald", "🟢")
+        b2 = render_badge(f"{total_games:,} Games Active", "cyan", "🎮")
+        b3 = render_badge(f"{total_users:,} Verified Gamers", "purple", "👥")
+        b4 = render_badge(f"{total_reviews:,} Amazon Reviews", "amber", "⭐")
+        b5 = render_badge("Dense 384-d Vectors", "coral", "🧠")
+        badges_html = f'<div class="telemetry-badges-row">{b1}{b2}{b3}{b4}{b5}</div>'
 
-    header_html = f"""
-    <div class="hero-header-container">
-        <h1 class="hero-title">{html.escape(title)}</h1>
-        <div class="hero-subtitle">{html.escape(subtitle)}</div>
-        {badges_html}
-    </div>
-    """
-    st.markdown(header_html, unsafe_allow_html=True)
+    header_html = (
+        f'<div class="hero-header-container">'
+        f'<h1 class="hero-title">{html.escape(title)}</h1>'
+        f'<div class="hero-subtitle">{html.escape(subtitle)}</div>'
+        f'{badges_html}'
+        f'</div>'
+    )
+    render_html(header_html)
 
 
 def render_metric_card(
@@ -574,32 +538,19 @@ def render_metric_card(
 ) -> None:
     """
     Renders a glassmorphic KPI metric card.
-    
-    Args:
-        title: Metric title (e.g. 'DIVERSITY SCORE').
-        value: Metric value (e.g. '0.84 ILD').
-        subtitle: Context description.
-        icon: Display emoji icon.
-        delta: Trend indicator (e.g. '+12% vs Baseline').
-        color_type: Theme accent color.
     """
     sub_html = f'<div class="kpi-subtitle">{html.escape(subtitle)}</div>' if subtitle else ""
     delta_html = f'<span style="font-size:0.8rem; color:var(--accent-emerald); margin-left:8px;">{html.escape(delta)}</span>' if delta else ""
-    
     val_str = f"{value:,}" if isinstance(value, (int, float)) else str(value)
 
-    card_html = f"""
-    <div class="kpi-card">
-        <div class="kpi-title">
-            <span>{icon}</span> {html.escape(title)}
-        </div>
-        <div class="kpi-value">
-            {html.escape(val_str)}{delta_html}
-        </div>
-        {sub_html}
-    </div>
-    """
-    st.markdown(card_html, unsafe_allow_html=True)
+    card_html = (
+        f'<div class="kpi-card">'
+        f'<div class="kpi-title"><span>{icon}</span> {html.escape(title)}</div>'
+        f'<div class="kpi-value">{html.escape(val_str)}{delta_html}</div>'
+        f'{sub_html}'
+        f'</div>'
+    )
+    render_html(card_html)
 
 
 def render_game_card(
@@ -610,10 +561,7 @@ def render_game_card(
 ) -> None:
     """
     Renders an interactive, responsive game card with cover poster, scores, and explanation.
-    
-    Supports both Python dictionary and Pydantic RecommendedGameItem models.
     """
-    # Extract item attributes gracefully
     if hasattr(game, "model_dump"):
         data = game.model_dump()
     elif isinstance(game, dict):
@@ -635,107 +583,79 @@ def render_game_card(
     cb_score = float(data.get("cb_score", 0.0) or 0.0)
     sentiment_score = float(data.get("sentiment_score", 0.0) or 0.0)
 
-    # Explanation details
     explanation = data.get("explanation")
     if hasattr(explanation, "model_dump"):
         explanation = explanation.model_dump()
     elif not isinstance(explanation, dict):
         explanation = getattr(explanation, "__dict__", None) if explanation else None
 
-    # Format poster HTML
+    # Poster
     if image_url and str(image_url).startswith("http"):
         poster_html = f'<img src="{html.escape(image_url)}" class="poster-image" alt="{html.escape(title)}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML=\'<div class=poster-fallback>🎮</div>\';">'
     else:
         poster_html = '<div class="poster-fallback">🎮</div>'
 
-    # Format Rank badge
     rank_badge_html = f'<div class="game-rank-badge">#{item_rank}</div>' if item_rank else ""
-
-    # Format Price pill
     price_html = f'{render_badge(f"${price:.2f}", "emerald")}' if price and price > 0 else ""
 
-    # Format Score Progress bar (0 - 100%)
     score_pct = max(0, min(100, int(hybrid_score * 100))) if hybrid_score > 0 else 0
     score_bar_html = ""
     if hybrid_score > 0 and not is_compact:
-        score_bar_html = f"""
-        <div style="margin-top: 10px;">
-            <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600;">
-                <span style="color:var(--accent-cyan);">Match Affinity</span>
-                <span style="color:var(--text-primary);">{score_pct}%</span>
-            </div>
-            <div class="score-bar-container">
-                <div class="score-bar-fill" style="width: {score_pct}%;"></div>
-            </div>
-            <div class="scores-breakdown-row">
-                <span>CF: {cf_score:.2f}</span>
-                <span>Content: {cb_score:.2f}</span>
-                <span>Sentiment: {sentiment_score:+.2f}</span>
-            </div>
-        </div>
-        """
+        score_bar_html = (
+            f'<div style="margin-top: 10px;">'
+            f'<div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600;">'
+            f'<span style="color:var(--accent-cyan);">Match Affinity</span>'
+            f'<span style="color:var(--text-primary);">{score_pct}%</span>'
+            f'</div>'
+            f'<div class="score-bar-container">'
+            f'<div class="score-bar-fill" style="width: {score_pct}%;"></div>'
+            f'</div>'
+            f'<div class="scores-breakdown-row">'
+            f'<span>CF: {cf_score:.2f}</span>'
+            f'<span>Content: {cb_score:.2f}</span>'
+            f'<span>Sentiment: {sentiment_score:+.2f}</span>'
+            f'</div>'
+            f'</div>'
+        )
 
-    # Format Explanation block
     explanation_html = ""
     if show_explanation and explanation:
-        anchor_game = explanation.get("anchor_game")
-        anchor_sim = explanation.get("anchor_similarity_pct", 0.0)
-        reasons = explanation.get("key_reasons", [])
-        quote = explanation.get("social_proof_quote", "")
+        anchor_game = explanation.get("anchor_game") or explanation.get("anchor_title")
+        anchor_sim = explanation.get("anchor_similarity_pct") or (explanation.get("anchor_similarity", 0.0) * 100)
+        reasons = explanation.get("key_reasons") or explanation.get("reasons") or []
+        quote = explanation.get("social_proof_quote") or explanation.get("highlight_quote") or ""
 
-        reasons_list_html = "".join([f"<li>{html.escape(r)}</li>" for r in reasons[:2]]) if reasons else ""
+        reasons_list_html = "".join([f'<li>{html.escape(str(r))}</li>' for r in reasons[:2]]) if reasons else ""
 
         anchor_badge = ""
         if anchor_game:
-            anchor_badge = f"""
-            <div style="margin-bottom:6px;">
-                {render_badge(f"Inspired by: {anchor_game[:25]}... ({anchor_sim:.0f}%)", "purple", "🎯")}
-            </div>
-            """
+            anchor_badge = f'<div style="margin-bottom:6px;">{render_badge(f"Inspired by: {str(anchor_game)[:25]}... ({float(anchor_sim):.0f}%)", "purple", "🎯")}</div>'
 
         quote_html = ""
         if quote:
-            quote_html = f"""
-            <div class="quote-bubble">
-                "{html.escape(quote[:160])}{'...' if len(quote) > 160 else ''}"
-                <div class="quote-author">✓ Verified Player Review</div>
-            </div>
-            """
+            quote_html = f'<div class="quote-bubble">"{html.escape(str(quote)[:160])}..."<div class="quote-author">✓ Verified Player Review</div></div>'
 
-        explanation_html = f"""
-        <div class="explanation-box">
-            {anchor_badge}
-            <ul style="margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 0.78rem;">
-                {reasons_list_html}
-            </ul>
-            {quote_html}
-        </div>
-        """
+        explanation_html = (
+            f'<div class="explanation-box">'
+            f'{anchor_badge}'
+            f'<ul style="margin: 0; padding-left: 16px; color: var(--text-secondary); font-size: 0.78rem;">{reasons_list_html}</ul>'
+            f'{quote_html}'
+            f'</div>'
+        )
 
-    card_html = f"""
-    <div class="game-card-wrapper">
-        <div class="poster-container">
-            {rank_badge_html}
-            {poster_html}
-        </div>
-        <div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                {render_badge(category[:20], "cyan")}
-                {price_html}
-            </div>
-            <div class="game-title-text" title="{html.escape(title)}">
-                {html.escape(title)}
-            </div>
-            <div class="meta-row">
-                {render_rating_stars(avg_rating)}
-                <span class="rating-count">({rating_count:,} reviews)</span>
-            </div>
-        </div>
-        {score_bar_html}
-        {explanation_html}
-    </div>
-    """
-    st.markdown(card_html, unsafe_allow_html=True)
+    card_html = (
+        f'<div class="game-card-wrapper">'
+        f'<div class="poster-container">{rank_badge_html}{poster_html}</div>'
+        f'<div>'
+        f'<div style="display:flex; justify-content:space-between; align-items:center;">{render_badge(category[:20], "cyan")}{price_html}</div>'
+        f'<div class="game-title-text" title="{html.escape(title)}">{html.escape(title)}</div>'
+        f'<div class="meta-row">{render_rating_stars(avg_rating)}<span class="rating-count">({rating_count:,} reviews)</span></div>'
+        f'</div>'
+        f'{score_bar_html}'
+        f'{explanation_html}'
+        f'</div>'
+    )
+    render_html(card_html)
 
 
 def render_games_grid(
@@ -745,17 +665,11 @@ def render_games_grid(
 ) -> None:
     """
     Arranges games into a clean responsive multi-column grid layout in Streamlit.
-    
-    Args:
-        games: List of games (dicts or DTOs).
-        num_columns: Number of grid columns (default 3).
-        show_explanation: Whether to display explainability details.
     """
     if not games:
         render_empty_state("No Games Found", "Try adjusting your search query, genre filters, or select a different gamer profile.")
         return
 
-    # Chunk list into rows of `num_columns`
     for i in range(0, len(games), num_columns):
         cols = st.columns(num_columns)
         chunk = games[i : i + num_columns]
@@ -767,9 +681,6 @@ def render_games_grid(
 def render_explanation_panel(explanation: Union[Dict[str, Any], Any]) -> None:
     """
     Renders a standalone dedicated explanation breakdown view.
-    
-    Args:
-        explanation: Dict or ExplainGameResponse object.
     """
     if hasattr(explanation, "model_dump"):
         data = explanation.model_dump()
@@ -779,57 +690,47 @@ def render_explanation_panel(explanation: Union[Dict[str, Any], Any]) -> None:
         data = getattr(explanation, "__dict__", {})
 
     title = data.get("title", "Game Recommendation Explanation")
-    anchor_game = data.get("anchor_game")
-    anchor_sim = data.get("anchor_similarity_pct", 0.0)
-    key_reasons = data.get("key_reasons", [])
-    quote = data.get("social_proof_quote", "")
+    anchor_game = data.get("anchor_game") or data.get("anchor_title")
+    anchor_sim = data.get("anchor_similarity_pct") or (data.get("anchor_similarity", 0.0) * 100)
+    key_reasons = data.get("key_reasons") or data.get("reasons") or []
+    quote = data.get("social_proof_quote") or data.get("highlight_quote") or ""
 
-    reasons_html = "".join([f'<li style="margin-bottom:6px;">✨ {html.escape(r)}</li>' for r in key_reasons])
+    reasons_html = "".join([f'<li style="margin-bottom:6px;">✨ {html.escape(str(r))}</li>' for r in key_reasons])
 
     anchor_html = ""
     if anchor_game:
-        anchor_html = f"""
-        <div style="background: rgba(127, 0, 255, 0.1); border: 1px solid rgba(127, 0, 255, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
-            <div style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Anchor Inspiration</div>
-            <div style="font-size:1.1rem; font-weight:700; color:#ffffff; margin:4px 0;">{html.escape(anchor_game)}</div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:0.82rem; color:var(--accent-cyan);">Semantic Similarity Match:</span>
-                <strong>{anchor_sim:.1f}%</strong>
-            </div>
-        </div>
-        """
+        anchor_html = (
+            f'<div style="background: rgba(127, 0, 255, 0.1); border: 1px solid rgba(127, 0, 255, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">'
+            f'<div style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Anchor Inspiration</div>'
+            f'<div style="font-size:1.1rem; font-weight:700; color:#ffffff; margin:4px 0;">{html.escape(str(anchor_game))}</div>'
+            f'<div style="display:flex; align-items:center; gap:8px;">'
+            f'<span style="font-size:0.82rem; color:var(--accent-cyan);">Semantic Similarity Match:</span>'
+            f'<strong>{float(anchor_sim):.1f}%</strong>'
+            f'</div>'
+            f'</div>'
+        )
 
     quote_html = ""
     if quote:
-        quote_html = f"""
-        <div class="quote-bubble" style="margin-top:16px;">
-            "{html.escape(quote)}"
-            <div class="quote-author">⭐ Highlighted Player Sentiment Insight</div>
-        </div>
-        """
+        quote_html = f'<div class="quote-bubble" style="margin-top:16px;">"{html.escape(str(quote))}"<div class="quote-author">⭐ Highlighted Player Sentiment Insight</div></div>'
 
-    panel_html = f"""
-    <div class="persona-card" style="border-color: rgba(0, 242, 254, 0.3);">
-        <h3 style="margin-top:0; color:var(--accent-cyan);">🔍 Why You Will Love: {html.escape(title)}</h3>
-        {anchor_html}
-        <div style="margin: 12px 0;">
-            <div style="font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-bottom:8px;">KEY RECOMMENDATION SIGNALS:</div>
-            <ul style="list-style:none; padding-left:0; color:#e2e8f0; font-size:0.9rem;">
-                {reasons_html}
-            </ul>
-        </div>
-        {quote_html}
-    </div>
-    """
-    st.markdown(panel_html, unsafe_allow_html=True)
+    panel_html = (
+        f'<div class="persona-card" style="border-color: rgba(0, 242, 254, 0.3);">'
+        f'<h3 style="margin-top:0; color:var(--accent-cyan);">🔍 Why You Will Love: {html.escape(str(title))}</h3>'
+        f'{anchor_html}'
+        f'<div style="margin: 12px 0;">'
+        f'<div style="font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-bottom:8px;">KEY RECOMMENDATION SIGNALS:</div>'
+        f'<ul style="list-style:none; padding-left:0; color:#e2e8f0; font-size:0.9rem;">{reasons_html}</ul>'
+        f'</div>'
+        f'{quote_html}'
+        f'</div>'
+    )
+    render_html(panel_html)
 
 
 def render_gamer_persona_card(analytics: Union[Dict[str, Any], Any]) -> None:
     """
     Renders an interactive Gamer Persona & Analytics Profile summary card.
-    
-    Args:
-        analytics: Dict or UserAnalyticsResponse object.
     """
     if hasattr(analytics, "model_dump"):
         data = analytics.model_dump()
@@ -845,7 +746,6 @@ def render_gamer_persona_card(analytics: Union[Dict[str, Any], Any]) -> None:
     top_categories = data.get("top_categories", [])
     rating_dist = data.get("rating_distribution", {})
 
-    # Determine persona icon & flair
     persona_icons = {
         "Action-Adventure Enthusiast": "🗡️",
         "RPG & Strategy Master": "🧙‍♂️",
@@ -856,56 +756,42 @@ def render_gamer_persona_card(analytics: Union[Dict[str, Any], Any]) -> None:
         "General Gamer": "🎮",
     }
     icon = persona_icons.get(persona, "🎮")
-
-    # Categories pills
     cats_html = " ".join([render_badge(c, "cyan") for c in top_categories[:4]])
 
-    # Star distribution progress bars
     dist_html = ""
     if rating_dist:
         max_count = max(rating_dist.values()) if rating_dist.values() else 1
         for star in [5, 4, 3, 2, 1]:
             count = rating_dist.get(star, rating_dist.get(str(star), 0))
             pct = int((count / max_count) * 100) if max_count > 0 else 0
-            dist_html += f"""
-            <div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; margin-bottom:3px;">
-                <span style="width:20px; color:#ffb703;">{star}★</span>
-                <div style="flex-grow:1; background:rgba(255,255,255,0.06); height:6px; border-radius:3px; overflow:hidden;">
-                    <div style="background:linear-gradient(90deg, #ffb703, #e100ff); height:100%; width:{pct}%;"></div>
-                </div>
-                <span style="width:30px; text-align:right; color:var(--text-muted);">{count}</span>
-            </div>
-            """
+            dist_html += (
+                f'<div style="display:flex; align-items:center; gap:8px; font-size:0.75rem; margin-bottom:3px;">'
+                f'<span style="width:20px; color:#ffb703;">{star}★</span>'
+                f'<div style="flex-grow:1; background:rgba(255,255,255,0.06); height:6px; border-radius:3px; overflow:hidden;">'
+                f'<div style="background:linear-gradient(90deg, #ffb703, #e100ff); height:100%; width:{pct}%;"></div>'
+                f'</div>'
+                f'<span style="width:30px; text-align:right; color:var(--text-muted);">{count}</span>'
+                f'</div>'
+            )
 
-    card_html = f"""
-    <div class="persona-card">
-        <div class="persona-header">
-            <div class="persona-avatar">{icon}</div>
-            <div>
-                <h3 class="persona-name">{html.escape(persona)}</h3>
-                <div class="persona-tag">Gamer ID: <code>{html.escape(user_id)}</code></div>
-            </div>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-            <div>
-                <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Activity Volume</div>
-                <div style="font-size:1.3rem; font-weight:700; color:#ffffff;">{total_reviews:,} <span style="font-size:0.8rem; font-weight:400; color:var(--text-secondary);">Reviews</span></div>
-                <div style="margin-top:6px;">{render_rating_stars(avg_rating)}</div>
-            </div>
-            <div>
-                <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Star Distribution</div>
-                {dist_html}
-            </div>
-        </div>
-        <div>
-            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Core Genre Affinities</div>
-            <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                {cats_html}
-            </div>
-        </div>
-    </div>
-    """
-    st.markdown(card_html, unsafe_allow_html=True)
+    card_html = (
+        f'<div class="persona-card">'
+        f'<div class="persona-header">'
+        f'<div class="persona-avatar">{icon}</div>'
+        f'<div><h3 class="persona-name">{html.escape(str(persona))}</h3><div class="persona-tag">Gamer ID: <code>{html.escape(str(user_id))}</code></div></div>'
+        f'</div>'
+        f'<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">'
+        f'<div>'
+        f'<div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Activity Volume</div>'
+        f'<div style="font-size:1.3rem; font-weight:700; color:#ffffff;">{total_reviews:,} <span style="font-size:0.8rem; font-weight:400; color:var(--text-secondary);">Reviews</span></div>'
+        f'<div style="margin-top:6px;">{render_rating_stars(avg_rating)}</div>'
+        f'</div>'
+        f'<div><div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Star Distribution</div>{dist_html}</div>'
+        f'</div>'
+        f'<div><div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Core Genre Affinities</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{cats_html}</div></div>'
+        f'</div>'
+    )
+    render_html(card_html)
 
 
 def render_chat_message(
@@ -918,51 +804,37 @@ def render_chat_message(
 ) -> None:
     """
     Renders conversational AI message cards with rich tool outputs & recommendation previews.
-    
-    Args:
-        role: 'user' or 'assistant'.
-        content: Natural language response text (supports markdown).
-        intent: Classified user intent (e.g. 'recommend', 'explain', 'analytics').
-        tool_used: Name of tool dispatched by AI Agent.
-        tool_output: Structured payload returned by dispatched tool.
-        timestamp: Message generation time.
     """
     if role == "user":
-        chat_html = f"""
-        <div class="chat-bubble-user">
-            <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-bottom:4px; display:flex; justify-content:space-between;">
-                <span>👤 You</span>
-                <span>{timestamp or ''}</span>
-            </div>
-            <div style="font-size:0.95rem; line-height:1.5;">{html.escape(content)}</div>
-        </div>
-        """
-        st.markdown(chat_html, unsafe_allow_html=True)
+        chat_html = (
+            f'<div class="chat-bubble-user">'
+            f'<div style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-bottom:4px; display:flex; justify-content:space-between;">'
+            f'<span>👤 You</span><span>{timestamp or ""}</span>'
+            f'</div>'
+            f'<div style="font-size:0.95rem; line-height:1.5;">{html.escape(content)}</div>'
+            f'</div>'
+        )
+        render_html(chat_html)
     else:
         tool_meta_html = ""
         if tool_used:
-            tool_meta_html = f"""
-            <div class="agent-meta-tag">
-                <span>⚡ Dispatched: <strong>{html.escape(tool_used)}</strong></span>
-                {f'<span style="opacity:0.6;">• Intent: {html.escape(intent)}</span>' if intent else ''}
-            </div>
-            """
+            intent_str = f'<span style="opacity:0.6;">• Intent: {html.escape(intent)}</span>' if intent else ""
+            tool_meta_html = f'<div class="agent-meta-tag"><span>⚡ Dispatched: <strong>{html.escape(tool_used)}</strong></span>{intent_str}</div>'
 
-        chat_html = f"""
-        <div class="chat-bubble-agent">
-            <div style="font-size:0.75rem; color:var(--accent-cyan); margin-bottom:6px; display:flex; justify-content:space-between;">
-                <span>🤖 AI Gaming Concierge</span>
-                <span>{timestamp or ''}</span>
-            </div>
-            {tool_meta_html}
-            <div style="font-size:0.95rem; line-height:1.6; color:#f1f5f9;">
-                {content}
-            </div>
-        </div>
-        """
-        st.markdown(chat_html, unsafe_allow_html=True)
+        # Convert markdown newlines to <br> or render safe HTML
+        formatted_content = html.escape(content).replace("\n", "<br>")
 
-        # If tool returned structured game recommendations, render them gracefully
+        chat_html = (
+            f'<div class="chat-bubble-agent">'
+            f'<div style="font-size:0.75rem; color:var(--accent-cyan); margin-bottom:6px; display:flex; justify-content:space-between;">'
+            f'<span>🤖 AI Gaming Concierge</span><span>{timestamp or ""}</span>'
+            f'</div>'
+            f'{tool_meta_html}'
+            f'<div style="font-size:0.95rem; line-height:1.6; color:#f1f5f9;">{formatted_content}</div>'
+            f'</div>'
+        )
+        render_html(chat_html)
+
         if tool_output and isinstance(tool_output, dict):
             items = tool_output.get("recommendations") or tool_output.get("items") or []
             if isinstance(items, list) and len(items) > 0:
@@ -976,11 +848,11 @@ def render_empty_state(
     icon: str = "🎮",
 ) -> None:
     """Renders a friendly cyber-styled empty state placeholder."""
-    empty_html = f"""
-    <div style="text-align: center; padding: 40px 20px; background: rgba(18, 24, 38, 0.4); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 16px; margin: 20px 0;">
-        <div style="font-size: 3rem; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.3));">{icon}</div>
-        <h3 style="color: #ffffff; margin-bottom: 8px;">{html.escape(title)}</h3>
-        <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto; font-size: 0.9rem;">{html.escape(message)}</p>
-    </div>
-    """
-    st.markdown(empty_html, unsafe_allow_html=True)
+    empty_html = (
+        f'<div style="text-align: center; padding: 40px 20px; background: rgba(18, 24, 38, 0.4); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 16px; margin: 20px 0;">'
+        f'<div style="font-size: 3rem; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.3));">{icon}</div>'
+        f'<h3 style="color: #ffffff; margin-bottom: 8px;">{html.escape(title)}</h3>'
+        f'<p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto; font-size: 0.9rem;">{html.escape(message)}</p>'
+        f'</div>'
+    )
+    render_html(empty_html)
