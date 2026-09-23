@@ -1,13 +1,13 @@
 """
-Main Streamlit Web Application: AI-Powered Video Games Recommendation & Concierge.
+Main Streamlit Web Application: AI-Powered Video Games Recommendation & Concierge (Vietnamese UI).
 
-Integrates:
+Hệ thống Gợi ý Game Đa Phương Thức và Trợ lý Trò chuyện AI:
 - Hybrid Multi-Modal Recommendation Engine (SVD CF + Sentence-Transformers + VADER Sentiment)
 - Maximal Marginal Relevance (MMR) Diversity Re-Ranking & Intra-List Diversity (ILD)
 - Transparent Multi-Signal Explanations & Social Proof Review Quotes
 - Gamer Persona & Behavioral Analytics
 - Conversational AI Gaming Agent with Multi-turn Memory & Tool Telemetry
-- Cyber Gaming Glassmorphic Design System
+- Cyber Gaming Glassmorphic Design System (100% Tiếng Việt)
 """
 
 import os
@@ -46,7 +46,7 @@ from src.ui.components import (
 # ============================================================================
 
 st.set_page_config(
-    page_title="GameAI - Video Games Recommender & Concierge",
+    page_title="AI Gaming Hub - Gợi Ý & Trợ Lý Game Thông Minh",
     page_icon="🎮",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -59,7 +59,7 @@ apply_custom_css()
 # Cached Resource Loader (Singleton Models & Data Indices)
 # ============================================================================
 
-@st.cache_resource(show_spinner="⚡ Loading Recommender Engines, Vectors & Image Catalog...")
+@st.cache_resource(show_spinner="⚡ Đang nạp mô hình gợi ý, vector ngữ nghĩa và kho ảnh bìa...")
 def load_app_resources():
     """
     Initializes and warms up the AI Agent Runner, Poster Image Cache,
@@ -86,7 +86,7 @@ def load_app_resources():
                 if url:
                     image_map[asin] = url
         except Exception as e:
-            st.sidebar.warning(f"Image cache warning: {e}")
+            st.sidebar.warning(f"Lỗi nạp ảnh bìa: {e}")
 
     # 2. Categories & Item Metadata Cache
     categories_set = set()
@@ -130,47 +130,47 @@ sample_users: List[str] = resources["sample_users"]
 
 
 # ============================================================================
-# Header & System Telemetry Hero Banner
+# Header & System Telemetry Hero Banner (Vietnamese)
 # ============================================================================
 
 stats_info = {
     "total_games": len(catalog_items) if catalog_items else 25612,
     "total_users": 94762,
     "total_interactions": 814586,
-    "status": "Online (In-Memory)",
+    "status": "Trực Tuyến (In-Memory)",
 }
 
 render_header(
-    title="🎮 AI Video Games Recommender & Concierge",
-    subtitle="Hybrid Multi-Modal Recommender (SVD + MiniLM-L6 Embeddings + VADER Sentiment) & AI Agent Platform",
+    title="🎮 Hệ Thống Gợi Ý & Trợ Lý Trò Chơi Điện Tử AI",
+    subtitle="Mô hình Đa Luồng (SVD + Vector Ngữ Nghĩa MiniLM-L6 + Cảm Xúc Đánh Giá VADER) & Điều Phối AI Gaming Concierge",
     stats=stats_info,
 )
 
 
 # ============================================================================
-# Main Navigation Tabs
+# Main Navigation Tabs (Vietnamese)
 # ============================================================================
 
 tab_recs, tab_chat, tab_analytics = st.tabs([
-    "🎯 Personalized Recommendations & Discovery",
-    "🤖 AI Gaming Concierge Chat",
-    "📊 Gamer Analytics & Catalog Explorer",
+    "🎯 Gợi Ý Cá Nhân Hóa & Khám Phá Game",
+    "🤖 Trò Chuyện Cùng Trợ Lý AI (Gaming Concierge)",
+    "📊 Phân Tích Chân Dung & Tra Cứu Kho Game",
 ])
 
 
 # ============================================================================
-# TAB 1: Personalized Recommendations & Discovery
+# TAB 1: Gợi Ý Cá Nhân Hóa & Khám Phá Game
 # ============================================================================
 
 with tab_recs:
-    st.sidebar.markdown("### ⚙️ Recommendation Controls")
+    st.sidebar.markdown("### ⚙️ Bảng Điều Khiển Gợi Ý")
     
     rec_mode = st.sidebar.radio(
-        "Select Discovery Strategy:",
+        "Chọn Chiến Lược Đề Xuất:",
         [
-            "🔮 Personalized Hybrid (User Profile)",
-            "🧠 Zero-Shot Semantic Search (Text Query)",
-            "🔗 Item-to-Item Similar Games",
+            "🔮 Gợi ý Cá nhân hóa (Theo Hồ Sơ Game Thủ)",
+            "🧠 Tìm kiếm Ngữ nghĩa AI (Mô tả Lối chơi)",
+            "🔗 Tìm Game Tương tự (Item-to-Item)",
         ],
         index=0,
     )
@@ -178,36 +178,36 @@ with tab_recs:
     st.sidebar.markdown("---")
 
     # Mode 1: Personalized Hybrid Recommender
-    if rec_mode == "🔮 Personalized Hybrid (User Profile)":
+    if rec_mode == "🔮 Gợi ý Cá nhân hóa (Theo Hồ Sơ Game Thủ)":
         user_selection_type = st.sidebar.radio(
-            "Select User Source:",
-            ["Preset Active Gamer", "Custom User ID"],
+            "Nguồn Hồ Sơ Game Thủ:",
+            ["Game thủ Mẫu có sẵn", "Nhập Mã User ID"],
             index=0,
             horizontal=True,
         )
 
-        if user_selection_type == "Preset Active Gamer":
-            selected_user_id = st.sidebar.selectbox("Choose Sample Gamer ID:", sample_users, index=0)
+        if user_selection_type == "Game thủ Mẫu có sẵn":
+            selected_user_id = st.sidebar.selectbox("Chọn Mã Game Thủ Mẫu:", sample_users, index=0)
         else:
-            selected_user_id = st.sidebar.text_input("Enter Amazon User ID:", value="A100WO06OIG7KW").strip()
+            selected_user_id = st.sidebar.text_input("Nhập Mã Amazon User ID:", value="A100WO06OIG7KW").strip()
 
-        st.sidebar.markdown("#### 🎛️ Algorithm Tuning")
-        top_k = st.sidebar.slider("Number of Recommendations (Top-K):", min_value=3, max_value=30, value=9, step=3)
-        use_mmr = st.sidebar.toggle("Enable MMR Diversity Re-ranking", value=True)
+        st.sidebar.markdown("#### 🎛️ Tinh Chỉnh Thuật Toán")
+        top_k = st.sidebar.slider("Số lượng Game muốn đề xuất (Top-K):", min_value=3, max_value=30, value=9, step=3)
+        use_mmr = st.sidebar.toggle("Bật cơ chế Đa dạng hóa danh mục (MMR Re-ranking)", value=True)
         
         diversity_lambda = 0.7
         if use_mmr:
             diversity_lambda = st.sidebar.slider(
-                "MMR Relevance vs Diversity (λ):",
+                "Độ cân bằng MMR (λ): Chuẩn xác ↔ Đa dạng:",
                 min_value=0.0,
                 max_value=1.0,
                 value=0.7,
                 step=0.05,
-                help="1.0 = Pure Accuracy/Relevance, 0.0 = Maximum Category Diversity"
+                help="1.0 = Ưu tiên tối đa độ chuẩn xác, 0.0 = Tối đa hóa sự đa dạng các thể loại game"
             )
 
-        category_filter = st.sidebar.selectbox("Filter by Category (Optional):", ["All Categories"] + categories_list, index=0)
-        actual_category = None if category_filter == "All Categories" else category_filter
+        category_filter = st.sidebar.selectbox("Lọc theo Thể loại (Tùy chọn):", ["Tất cả thể loại"] + categories_list, index=0)
+        actual_category = None if category_filter == "Tất cả thể loại" else category_filter
 
         # Show Gamer Persona & Historical Profile
         if selected_user_id:
@@ -217,10 +217,10 @@ with tab_recs:
         # Recommendation Generation Trigger
         col_btn, _ = st.columns([1, 3])
         with col_btn:
-            run_rec = st.button("🚀 Generate Personalized Recommendations", use_container_width=True, type="primary")
+            run_rec = st.button("🚀 Khám Phá Game Dành Riêng Cho Bạn", use_container_width=True, type="primary")
 
         if run_rec:
-            with st.spinner("🧠 Computing Hybrid SVD, Semantic Vectors, and Review Sentiments..."):
+            with st.spinner("🧠 Đang tính toán điểm SVD, vector ngữ nghĩa và phân tích cảm xúc cộng đồng..."):
                 t0 = time.time()
                 diversity_w = (1.0 - diversity_lambda) if use_mmr else 0.0
                 rec_output = runner.recommend_tool.run(
@@ -247,53 +247,53 @@ with tab_recs:
             meta = getattr(rec_res, "metadata", {}) or {}
             ild_score = meta.get("ild")
 
-            # Metrics Row
+            # Metrics Row (Vietnamese)
             m_col1, m_col2, m_col3, m_col4 = st.columns(4)
             with m_col1:
-                render_metric_card("GAMES RECOMMENDED", len(rec_res.recommendations), subtitle=f"Mode: {rec_res.mode}", icon="🎮")
+                render_metric_card("SỐ GAME ĐỀ XUẤT", len(rec_res.recommendations), subtitle=f"Chế độ: Gợi ý Cá nhân hóa", icon="🎮")
             with m_col2:
                 ild_val = f"{ild_score:.2f}" if ild_score is not None else "0.85"
-                render_metric_card("DIVERSITY (ILD)", ild_val, subtitle="Intra-List Diversity", icon="🎯", delta="+Optimal" if use_mmr else "Standard")
+                render_metric_card("ĐỘ ĐA DẠNG (ILD)", ild_val, subtitle="Độ phong phú thể loại", icon="🎯", delta="+Tối Ưu" if use_mmr else "Tiêu Chuẩn")
             with m_col3:
                 top_score = rec_res.recommendations[0].hybrid_score if rec_res.recommendations else 0.0
-                render_metric_card("PEAK AFFINITY", f"{top_score * 100:.1f}%", subtitle="Confidence match", icon="⚡", color_type="purple")
+                render_metric_card("ĐỘ PHÙ HỢP CAO NHẤT", f"{top_score * 100:.1f}%", subtitle="Độ tự tin đề xuất", icon="⚡", color_type="purple")
             with m_col4:
-                render_metric_card("INFERENCE LATENCY", f"{lat:.1f} ms", subtitle="Fast in-memory", icon="⏱️", color_type="emerald")
+                render_metric_card("TỐC ĐỘ TÍNH TOÁN", f"{lat:.1f} ms", subtitle="Xử lý siêu tốc In-Memory", icon="⏱️", color_type="emerald")
 
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("### 🌟 Curated Game Recommendations for You")
+            st.markdown("### 🌟 Danh Sách Tựa Game Đỉnh Cao Dành Riêng Cho Bạn")
             
             render_games_grid(rec_res.recommendations, num_columns=3, show_explanation=True)
         else:
-            st.info("👆 Click **'Generate Personalized Recommendations'** to compute optimal suggestions for this gamer.")
+            st.info("👆 Nhấn nút **'🚀 Khám Phá Game Dành Riêng Cho Bạn'** để hệ thống tính toán danh sách game tối ưu nhất cho game thủ này.")
 
     # Mode 2: Zero-Shot Semantic Search
-    elif rec_mode == "🧠 Zero-Shot Semantic Search (Text Query)":
-        st.markdown("### 🧠 Natural Language Semantic Discovery (Cold-Start Recommender)")
+    elif rec_mode == "🧠 Tìm kiếm Ngữ nghĩa AI (Mô tả Lối chơi)":
+        st.markdown("### 🧠 Khám Phá Game Bằng Ngôn Ngữ Tự Nhiên (AI Semantic Search)")
         st.markdown(
-            "Describe the gaming experience, theme, mechanics, or mood you want. "
-            "Our Sentence-Transformers AI will match your intent directly across 25,612 game embeddings."
+            "Hãy mô tả trải nghiệm, phong cách nghệ thuật, cảm xúc hoặc lối chơi bạn đang tìm kiếm. "
+            "Mô hình AI Sentence-Transformers sẽ quét trực tiếp không gian ngữ nghĩa 384 chiều của 25,612 tựa game để tìm kết quả chuẩn xác nhất."
         )
 
         preset_queries = [
-            "Open-world soulslike RPG with challenging boss fights and rich lore",
-            "Cozy relaxing farming and village life simulation",
-            "Fast-paced competitive multiplayer FPS with tactical shooting",
-            "Story-driven cinematic sci-fi mystery with atmospheric soundtrack",
-            "Classic nostalgic retro pixel platformer with challenging levels",
+            "Game RPG thế giới mở mang phong cách Dark Souls thử thách cao và cốt truyện sâu sắc",
+            "Game nông trại và mô phỏng cuộc sống thư giãn, đồ họa nhẹ nhàng dễ thương",
+            "Game bắn súng FPS đối kháng chiến thuật nhiều người chơi kịch tính",
+            "Game phiêu lưu viễn tưởng cốt truyện điện ảnh hấp dẫn kèm nhạc nền hoành tráng",
+            "Game đi cảnh platformer pixel hoài niệm cổ điển với độ khó cao",
         ]
 
-        selected_preset = st.selectbox("💡 Or choose an inspiration prompt:", ["-- Select an example prompt --"] + preset_queries)
+        selected_preset = st.selectbox("💡 Hoặc chọn một câu gợi ý mẫu:", ["-- Chọn một câu mẫu thử nghiệm --"] + preset_queries)
 
-        default_q = selected_preset if selected_preset != "-- Select an example prompt --" else "Open-world dark fantasy RPG with immersive exploration"
-        user_query = st.text_input("💬 Enter your gaming preference or theme query:", value=default_q)
+        default_q = selected_preset if selected_preset != "-- Chọn một câu mẫu thử nghiệm --" else "Game phiêu lưu nhập vai thế giới mở đồ họa đỉnh cao"
+        user_query = st.text_input("💬 Nhập mô tả trải nghiệm game bạn mong muốn:", value=default_q)
 
-        sem_k = st.sidebar.slider("Number of Results:", min_value=3, max_value=30, value=9, step=3)
-        sem_cat = st.sidebar.selectbox("Filter Category:", ["All Categories"] + categories_list, index=0)
-        sem_cat_filter = None if sem_cat == "All Categories" else sem_cat
+        sem_k = st.sidebar.slider("Số lượng Kết quả:", min_value=3, max_value=30, value=9, step=3)
+        sem_cat = st.sidebar.selectbox("Lọc theo Thể loại:", ["Tất cả thể loại"] + categories_list, index=0)
+        sem_cat_filter = None if sem_cat == "Tất cả thể loại" else sem_cat
 
-        if st.button("🔍 Discover Games by Semantic Meaning", type="primary", use_container_width=False):
-            with st.spinner("🔮 Encoding semantic query with MiniLM-L6 and computing cosine similarities..."):
+        if st.button("🔍 Khám Phá Game Bằng AI", type="primary", use_container_width=False):
+            with st.spinner("🔮 Đang mã hóa vector ngữ nghĩa và tính toán độ tương đồng Cosine..."):
                 t0 = time.time()
                 sem_output = runner.recommend_tool.run(
                     query=user_query,
@@ -307,36 +307,34 @@ with tab_recs:
                     if not getattr(item, "image_url", None) and item.parent_asin in image_map:
                         item.image_url = image_map[item.parent_asin]
 
-                st.markdown(f"#### 🎯 Discovered {len(sem_output.recommendations)} Games matching: *\"{user_query}\"* (⚡ {lat:.1f} ms)")
+                st.markdown(f"#### 🎯 Tìm thấy {len(sem_output.recommendations)} Game phù hợp với mô tả: *\"{user_query}\"* (⚡ {lat:.1f} ms)")
                 render_games_grid(sem_output.recommendations, num_columns=3, show_explanation=True)
 
     # Mode 3: Item-to-Item Similar Games
-    elif rec_mode == "🔗 Item-to-Item Similar Games":
-        st.markdown("### 🔗 Item-to-Item Content-Based Similarity Recommender")
-        st.markdown("Find games that share the same gameplay style, thematic lore, and player reviews as your favorite game.")
+    elif rec_mode == "🔗 Tìm Game Tương tự (Item-to-Item)":
+        st.markdown("### 🔗 Tìm Game Tương Đồng Phong Cách (Item-to-Item Similarity)")
+        st.markdown("Chọn một tựa game bạn yêu thích để hệ thống tìm kiếm những game có phong cách chơi, chủ đề và cảm xúc người chơi tương tự nhất.")
 
-        # Game title lookup / selector
         sample_asins = list(catalog_items.keys())[:100]
         asin_options = {asin: f"{catalog_items[asin].get('title', 'Unknown')[:60]} ({asin})" for asin in sample_asins}
 
         chosen_asin = st.selectbox(
-            "Select an Anchor Game to find similar titles:",
+            "Chọn Tựa Game Mỏ Neo Để Tìm Game Tương Tự:",
             options=list(asin_options.keys()),
             format_func=lambda x: asin_options.get(x, x),
         )
 
-        sim_k = st.sidebar.slider("Number of Similar Games:", min_value=3, max_value=24, value=6, step=3)
+        sim_k = st.sidebar.slider("Số lượng Game Tương Tự:", min_value=3, max_value=24, value=6, step=3)
 
-        if st.button("🔗 Find Similar Games", type="primary"):
-            with st.spinner("Finding nearest neighbor game vectors..."):
+        if st.button("🔗 Tìm Game Tương Tự Ngay", type="primary"):
+            with st.spinner("Đang tìm kiếm các vector game lân cận..."):
                 t0 = time.time()
-                sim_result = runner.hybrid_engine.recommend(
+                sim_result = runner.recommend_tool.hybrid_engine.recommend(
                     liked_item_ids=[chosen_asin],
                     top_k=sim_k,
                 )
                 lat = (time.time() - t0) * 1000
 
-                # Convert to cards format
                 items_to_show = []
                 for ranked_item in sim_result.items:
                     asin = ranked_item.parent_asin
@@ -355,50 +353,49 @@ with tab_recs:
                         "explanation": {
                             "anchor_game": catalog_items.get(chosen_asin, {}).get("title", chosen_asin),
                             "anchor_similarity_pct": ranked_item.cb_score * 100,
-                            "key_reasons": ["Similar game mechanics and genre affinity", "Positive community sentiment"],
-                            "social_proof_quote": "Players who enjoyed the anchor title also gave high ratings to this game.",
+                            "key_reasons": ["Cơ chế gameplay và phong cách đồ họa tương đồng cao", "Được cộng đồng game thủ đánh giá rất tích cực"],
+                            "social_proof_quote": "Những người chơi yêu thích tựa game mỏ neo cũng đánh giá rất cao tựa game này.",
                         }
                     })
 
                 anchor_game_title = catalog_items.get(chosen_asin, {}).get("title", chosen_asin)
-                st.markdown(f"#### 🎯 Games most similar to: **{anchor_game_title}** (⚡ {lat:.1f} ms)")
+                st.markdown(f"#### 🎯 Các tựa game tương đồng nhất với: **{anchor_game_title}** (⚡ {lat:.1f} ms)")
                 render_games_grid(items_to_show, num_columns=3, show_explanation=True)
 
 
 # ============================================================================
-# TAB 2: AI Gaming Concierge Chat (Phase 8 - Task 8.5)
+# TAB 2: Trò Chuyện Cùng Trợ Lý AI (Gaming Concierge)
 # ============================================================================
 
 with tab_chat:
-    # Context Header & Session Controls
     chat_top_col1, chat_top_col2, chat_top_col3 = st.columns([2, 1, 1])
     with chat_top_col1:
-        st.markdown("### 🤖 Conversational AI Gaming Concierge")
-        st.markdown("Your personal AI assistant for intelligent game recommendations, transparent reasoning, and behavioral analytics.")
+        st.markdown("### 🤖 Trợ Lý Trò Chuyện AI Gaming Concierge")
+        st.markdown("Trợ lý chuyên gia AI hỗ trợ bạn tư vấn game, phân tích chân dung game thủ và giải thích lý do đề xuất một cách minh bạch.")
     with chat_top_col2:
         chat_user_id = st.selectbox(
-            "Active Gamer Context:",
+            "Game thủ đang trò chuyện:",
             options=sample_users,
             index=0,
             key="chat_active_user",
-            help="The AI Concierge will use this gamer's history to personalize responses.",
+            help="Trợ lý AI sẽ sử dụng lịch sử chơi của game thủ này để cá nhân hóa câu trả lời.",
         )
     with chat_top_col3:
         st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
-        if st.button("🗑️ Reset Chat Memory", use_container_width=True):
+        if st.button("🗑️ Làm Mới Cuộc Trò Chuyện", use_container_width=True):
             runner.reset_session("streamlit_session")
             st.session_state["chat_messages"] = [
                 {
                     "role": "assistant",
-                    "content": f"👋 **Hello Gamer!** I've reset our conversation context. I'm currently tuned to gamer `[{chat_user_id}]`. What game adventure would you like to explore next?",
+                    "content": f"👋 **Chào Game Thủ!** Tôi đã làm mới bộ nhớ hội thoại. Hiện tại tôi đang đồng hành cùng tài khoản `[{chat_user_id}]`. Bạn muốn khám phá thế giới game nào tiếp theo?",
                     "intent": "casual_chat",
                     "timestamp": time.strftime("%H:%M"),
                 }
             ]
             st.rerun()
 
-    # Quick Suggestion Action Chips
-    st.markdown("##### 💡 Suggested Prompts:")
+    # Quick Suggestion Action Chips (Vietnamese)
+    st.markdown("##### 💡 Gợi Ý Câu Hỏi Nhanh:")
     chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns(5)
     
     prompt_to_send = None
@@ -425,9 +422,9 @@ with tab_chat:
         st.session_state["chat_messages"] = [
             {
                 "role": "assistant",
-                "content": f"👋 **Hello Gamer!** I'm your AI Gaming Concierge, currently personalized for gamer `[{chat_user_id}]`. Ask me anything about game recommendations, deep explanations, or gamer analytics!",
+                "content": f"👋 **Xin chào Game Thủ!** Tôi là AI Gaming Concierge, trợ lý chuyên sâu về trò chơi điện tử của bạn (đang cá nhân hóa cho tài khoản `[{chat_user_id}]`). Bạn có thể yêu cầu tôi gợi ý game, giải thích căn cứ đề xuất hoặc phân tích gu chơi game của bạn bất cứ lúc nào!",
                 "intent": "casual_chat",
-                "timestamp": "Online",
+                "timestamp": "Trực Tuyến",
             }
         ]
 
@@ -443,7 +440,7 @@ with tab_chat:
         )
 
     # Chat Input Area (User types or clicks a prompt chip)
-    chat_input_text = st.chat_input("💬 Ask your AI Concierge for recommendations, advice, or game insights...")
+    chat_input_text = st.chat_input("💬 Hãy hỏi Trợ lý AI bất cứ điều gì về game, mẹo chơi, hoặc yêu cầu gợi ý...")
     active_prompt = prompt_to_send or chat_input_text
 
     if active_prompt:
@@ -456,7 +453,7 @@ with tab_chat:
         st.session_state["chat_messages"].append(user_msg)
 
         # 2. Dispatch to AI Agent Runner
-        with st.spinner("🤖 AI Concierge is reasoning, routing tools, and generating response..."):
+        with st.spinner("🤖 Trợ lý AI đang phân tích ý định, điều phối công cụ và soạn thảo câu trả lời..."):
             agent_res = runner.run_dialogue(
                 message=active_prompt,
                 user_id=chat_user_id,
@@ -487,17 +484,17 @@ with tab_chat:
 
 
 # ============================================================================
-# TAB 3: Gamer Analytics & Catalog Explorer
+# TAB 3: Phân Tích Chân Dung & Tra Cứu Kho Game
 # ============================================================================
 
 with tab_analytics:
-    st.markdown("### 📊 Game Catalog & System Analytics Explorer")
+    st.markdown("### 📊 Tra Cứu & Khám Phá Kho Dữ Liệu Game (25,612 Tựa Game)")
     
     col_search, col_cat = st.columns([2, 1])
     with col_search:
-        search_kw = st.text_input("🔍 Search Game Catalog by Title / Keyword:", value="Mario").strip()
+        search_kw = st.text_input("🔍 Nhập tên game hoặc từ khóa tìm kiếm:", value="Mario").strip()
     with col_cat:
-        search_cat = st.selectbox("Category Filter:", ["All Categories"] + categories_list, key="explorer_cat")
+        search_cat = st.selectbox("Lọc theo Thể loại:", ["Tất cả thể loại"] + categories_list, key="explorer_cat")
 
     if search_kw:
         matched_items = []
@@ -505,7 +502,7 @@ with tab_analytics:
             title = item.get("title", "")
             cat = item.get("main_category") or item.get("category", "")
             if search_kw.lower() in title.lower():
-                if search_cat == "All Categories" or search_cat.lower() in cat.lower():
+                if search_cat == "Tất cả thể loại" or search_cat.lower() in cat.lower():
                     matched_items.append({
                         "parent_asin": asin,
                         "title": title,
@@ -516,8 +513,8 @@ with tab_analytics:
                         "price": item.get("price"),
                     })
 
-        st.markdown(f"**Found {len(matched_items):,} matching games in Silver Layer:**")
+        st.markdown(f"**Tìm thấy {len(matched_items):,} tựa game phù hợp trong Kho Dữ Liệu:**")
         if matched_items:
             render_games_grid(matched_items[:12], num_columns=3, show_explanation=False)
         else:
-            render_empty_state("No Games Found", f"No games matched the keyword '{search_kw}'.")
+            render_empty_state("Không Tìm Thấy Game", f"Không có tựa game nào khớp với từ khóa '{search_kw}'.")

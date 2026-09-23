@@ -42,7 +42,7 @@ class TestUIComponents(unittest.TestCase):
         self.assertTrue(mock_st_markdown.called)
         args, _ = mock_st_markdown.call_args
         self.assertIn("My Title", args[0])
-        self.assertIn("25,612 Games Active", args[0])
+        self.assertIn("25,612", args[0])
 
     @patch("streamlit.markdown")
     def test_render_metric_card(self, mock_st_markdown):
@@ -148,7 +148,7 @@ class TestUIComponents(unittest.TestCase):
         render_gamer_persona_card(analytics)
         self.assertTrue(mock_st_markdown.called)
         args, _ = mock_st_markdown.call_args
-        self.assertTrue("RPG &amp; Strategy Master" in args[0] or "RPG & Strategy Master" in args[0])
+        self.assertIn("Chiến Thuật", args[0])
         self.assertIn("A100TESTUSER", args[0])
 
     @patch("streamlit.markdown")
@@ -163,8 +163,8 @@ class TestUIComponents(unittest.TestCase):
             tool_used="RecommendTool",
         )
         args, _ = mock_st_markdown.call_args
-        self.assertIn("AI Gaming Concierge", args[0])
-        self.assertIn("RecommendTool", args[0])
+        self.assertIn("Trợ Lý AI Gaming Concierge", args[0])
+        self.assertIn("Gợi Ý", args[0])
 
 
 if __name__ == "__main__":
