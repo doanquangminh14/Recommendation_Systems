@@ -370,18 +370,62 @@ with tab_recs:
 # ============================================================================
 
 with tab_chat:
-    st.markdown("### 🤖 Conversational AI Gaming Concierge")
-    st.markdown(
-        "Chat directly with our intelligent Game Agent. Ask for recommendations (*'Find me dark RPGs like Dark Souls'*), "
-        "game explanations (*'Why should I play Skyrim?'*), or user analysis (*'Analyze my gamer profile'*)."
-    )
+    # Context Header & Session Controls
+    chat_top_col1, chat_top_col2, chat_top_col3 = st.columns([2, 1, 1])
+    with chat_top_col1:
+        st.markdown("### 🤖 Conversational AI Gaming Concierge")
+        st.markdown("Your personal AI assistant for intelligent game recommendations, transparent reasoning, and behavioral analytics.")
+    with chat_top_col2:
+        chat_user_id = st.selectbox(
+            "Active Gamer Context:",
+            options=sample_users,
+            index=0,
+            key="chat_active_user",
+            help="The AI Concierge will use this gamer's history to personalize responses.",
+        )
+    with chat_top_col3:
+        st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+        if st.button("🗑️ Reset Chat Memory", use_container_width=True):
+            runner.reset_session("streamlit_session")
+            st.session_state["chat_messages"] = [
+                {
+                    "role": "assistant",
+                    "content": f"👋 **Hello Gamer!** I've reset our conversation context. I'm currently tuned to gamer `[{chat_user_id}]`. What game adventure would you like to explore next?",
+                    "intent": "casual_chat",
+                    "timestamp": time.strftime("%H:%M"),
+                }
+            ]
+            st.rerun()
+
+    # Quick Suggestion Action Chips
+    st.markdown("##### 💡 Suggested Prompts:")
+    chip_col1, chip_col2, chip_col3, chip_col4, chip_col5 = st.columns(5)
+    
+    prompt_to_send = None
+    with chip_col1:
+        if st.button("🎯 Top Game Gợi Ý", use_container_width=True):
+            prompt_to_send = "Gợi ý những game phù hợp nhất với sở thích của tôi"
+    with chip_col2:
+        if st.button("🗡️ Dark Fantasy RPG", use_container_width=True):
+            prompt_to_send = "Tìm giúp tôi game RPG thế giới mở mang phong cách Dark Fantasy thử thách cao"
+    with chip_col3:
+        if st.button("🔍 Giải Thích Game", use_container_width=True):
+            prompt_to_send = "Tại sao tôi nên chơi game The Elder Scrolls V: Skyrim?"
+    with chip_col4:
+        if st.button("📊 Hồ Sơ Game Thủ", use_container_width=True):
+            prompt_to_send = "Hãy phân tích phong cách chơi game và lịch sử đánh giá của tôi"
+    with chip_col5:
+        if st.button("🕹️ Cozy / Pixel Art", use_container_width=True):
+            prompt_to_send = "Tìm cho tôi những tựa game thư giãn phong cách đồ họa pixel art hoài niệm"
+
+    st.markdown("---")
 
     # Session State for Chat History
     if "chat_messages" not in st.session_state:
         st.session_state["chat_messages"] = [
             {
                 "role": "assistant",
-                "content": "👋 **Hello Gamer!** I'm your AI Gaming Concierge. How can I help you discover your next favorite game today?",
+                "content": f"👋 **Hello Gamer!** I'm your AI Gaming Concierge, currently personalized for gamer `[{chat_user_id}]`. Ask me anything about game recommendations, deep explanations, or gamer analytics!",
                 "intent": "casual_chat",
                 "timestamp": "Online",
             }
@@ -398,23 +442,24 @@ with tab_chat:
             timestamp=msg.get("timestamp"),
         )
 
-    # Chat Input Area
-    chat_prompt = st.chat_input("💬 Ask your AI Concierge for recommendations, advice, or game insights...")
-    if chat_prompt:
+    # Chat Input Area (User types or clicks a prompt chip)
+    chat_input_text = st.chat_input("💬 Ask your AI Concierge for recommendations, advice, or game insights...")
+    active_prompt = prompt_to_send or chat_input_text
+
+    if active_prompt:
         # 1. Append User Message
         user_msg = {
             "role": "user",
-            "content": chat_prompt,
+            "content": active_prompt,
             "timestamp": time.strftime("%H:%M"),
         }
         st.session_state["chat_messages"].append(user_msg)
 
         # 2. Dispatch to AI Agent Runner
         with st.spinner("🤖 AI Concierge is reasoning, routing tools, and generating response..."):
-            active_uid = sample_users[0] if sample_users else "A100WO06OIG7KW"
             agent_res = runner.run_dialogue(
-                message=chat_prompt,
-                user_id=active_uid,
+                message=active_prompt,
+                user_id=chat_user_id,
                 session_id="streamlit_session",
             )
 
