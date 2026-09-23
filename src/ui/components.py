@@ -817,13 +817,15 @@ def render_chat_message(
     """
     Renders conversational AI message cards with rich tool outputs & recommendation previews in Vietnamese.
     """
-    if role == "user":
+    safe_content = str(content or "")
+    safe_role = str(role or "assistant")
+    if safe_role == "user":
         chat_html = (
             f'<div class="chat-bubble-user">'
             f'<div style="font-size:0.78rem; color:rgba(255,255,255,0.7); margin-bottom:4px; display:flex; justify-content:space-between;">'
-            f'<span>👤 Bạn (Game Thủ)</span><span>{timestamp or ""}</span>'
+            f'<span>👤 Bạn (Game Thủ)</span><span>{html.escape(str(timestamp or ""))}</span>'
             f'</div>'
-            f'<div style="font-size:0.98rem; line-height:1.55;">{html.escape(content)}</div>'
+            f'<div style="font-size:0.98rem; line-height:1.55;">{html.escape(safe_content)}</div>'
             f'</div>'
         )
         render_html(chat_html)
@@ -835,16 +837,16 @@ def render_chat_message(
                 "ExplainTool": "🔍 Công cụ Giải Thích Căn Cứ AI",
                 "AnalyticsTool": "📊 Công cụ Phân Tích Chân Dung Game Thủ",
             }
-            tool_name_display = tool_vi_map.get(tool_used, tool_used)
-            tool_meta_html = f'<div class="agent-meta-tag"><span>⚡ Đã kích hoạt: <strong>{html.escape(tool_name_display)}</strong></span></div>'
+            tool_name_display = tool_vi_map.get(str(tool_used), str(tool_used))
+            tool_meta_html = f'<div class="agent-meta-tag"><span>⚡ Đã kích hoạt: <strong>{html.escape(str(tool_name_display))}</strong></span></div>'
 
         # Format markdown linebreaks into safe readable HTML
-        formatted_content = html.escape(content).replace("\n", "<br>")
+        formatted_content = html.escape(safe_content).replace("\n", "<br>")
 
         chat_html = (
             f'<div class="chat-bubble-agent">'
             f'<div style="font-size:0.78rem; color:var(--accent-cyan); margin-bottom:6px; display:flex; justify-content:space-between;">'
-            f'<span>🤖 Trợ Lý AI Gaming Concierge</span><span>{timestamp or "Trực Tuyến"}</span>'
+            f'<span>🤖 Trợ Lý AI Gaming Concierge</span><span>{html.escape(str(timestamp or "Trực Tuyến"))}</span>'
             f'</div>'
             f'{tool_meta_html}'
             f'<div style="font-size:0.98rem; line-height:1.65; color:#f8fafc;">{formatted_content}</div>'
