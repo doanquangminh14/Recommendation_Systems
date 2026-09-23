@@ -86,6 +86,14 @@ def run_tests():
         sys.exit(1)
 
 
+def run_eval():
+    """Run full evaluation metrics and benchmark calculation."""
+    print(BANNER)
+    print("📈 Running Comprehensive Evaluation & Ranking Benchmarks...\n")
+    cmd = [sys.executable, "src/models/evaluation.py"]
+    subprocess.run(cmd, check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="🎮 AI-Powered Video Games Recommendation & Concierge System Entrypoint",
@@ -93,31 +101,29 @@ def main():
     )
     parser.add_argument(
         "--mode",
-        choices=["api", "ui", "test"],
+        choices=["api", "ui", "test", "eval"],
         default="ui",
-        help="Execution mode: 'api' for FastAPI REST server, 'ui' for Streamlit app, 'test' for tests suite.",
+        help="Execution mode: 'api' for FastAPI REST server, 'ui' for Streamlit app, 'test' for tests suite, 'eval' for benchmarks report.",
     )
     parser.add_argument("--api", action="store_true", help="Shortcut to start FastAPI server")
     parser.add_argument("--ui", action="store_true", help="Shortcut to start Streamlit UI")
     parser.add_argument("--test", action="store_true", help="Shortcut to run test suites")
+    parser.add_argument("--eval", action="store_true", help="Shortcut to run evaluation benchmarks report")
     parser.add_argument("--host", default="127.0.0.1", help="API server host address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=None, help="Port to bind (default: 8000 for API, 8501 for UI)")
 
     args = parser.parse_args()
 
-    if args.api:
+    if args.eval or args.mode == "eval":
+        run_eval()
+    elif args.api or args.mode == "api":
         port = args.port or 8000
         run_api(host=args.host, port=port)
-    elif args.test:
+    elif args.test or args.mode == "test":
         run_tests()
-    elif args.ui or args.mode == "ui":
+    else:
         port = args.port or 8501
         run_ui(port=port)
-    elif args.mode == "api":
-        port = args.port or 8000
-        run_api(host=args.host, port=port)
-    elif args.mode == "test":
-        run_tests()
 
 
 if __name__ == "__main__":
