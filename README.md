@@ -1,4 +1,4 @@
-# 🎮 AI-Powered Video Games Recommendation & Concierge System
+# AI-Powered Video Games Recommendation & Concierge System
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.11" />
@@ -11,13 +11,13 @@
 
 ---
 
-## 📖 1. Giới Thiệu Dự Án (Project Overview)
+## 1. Giới Thiệu Dự Án (Project Overview)
 
 **AI-Powered Video Games Recommendation & Concierge System** là một hệ thống toàn diện (End-to-End) từ kỹ thuật dữ liệu lớn (Data Engineering), mô hình học máy gợi ý lai đa luồng (Hybrid Recommender Systems), xử lý ngôn ngữ tự nhiên (NLP), trợ lý AI đàm thoại thông minh (AI Agent), cho đến triển khai API chuẩn Production và giao diện Web tương tác hiện đại.
 
 Dự án được xây dựng dựa trên tập dữ liệu thực tế **Amazon Reviews 2023 (Video Games)** với hơn 800.000 tương tác đánh giá và hơn 25.000 tựa game.
 
-### 🎯 Bài toán & Mục tiêu giải quyết:
+### Bài toán & Mục tiêu giải quyết:
 1. **Khắc phục độ thưa dữ liệu (Data Sparsity ~99.96%):** Kết hợp phân rã ma trận ẩn (SVD Matrix Factorization) với không gian vector ngữ nghĩa 384 chiều từ mô hình Transformer.
 2. **Giải quyết vấn đề Người dùng mới (Cold-Start Problem):** Cho phép tìm kiếm và gợi ý game tức thì thông qua mô tả bằng ngôn ngữ tự nhiên (*Natural Language Semantic Search*) hoặc xây dựng chân dung sở thích động (*Dynamic User Profile Centroid*).
 3. **Phá vỡ vòng lặp thiên lệch (Filter Bubble / Echo Chamber):** Áp dụng thuật toán tái xếp hạng đa dạng hóa danh mục **MMR (Maximal Marginal Relevance)** và đo lường độ phân tán thể loại **ILD (Intra-List Diversity)**.
@@ -26,30 +26,30 @@ Dự án được xây dựng dựa trên tập dữ liệu thực tế **Amazon
 
 ---
 
-## ✨ 2. Tính Năng Nổi Bật (Key Features)
+## 2. Tính Năng Nổi Bật (Key Features)
 
 ```
   ┌─────────────────────────────────────────────────────────────────────────────┐
   │                           4 TRỤ CỘT CỐT LÕI CỦA DỰ ÁN                       │
   ├───────────────────────┬─────────────────────────┬───────────────────────────┤
-  │ 🧠 Hybrid ML Engine   │ 🔀 MMR Diversity        │ 🤖 AI Gaming Concierge    │
+  │ Hybrid ML Engine      │ MMR Diversity           │ AI Gaming Concierge       │
   │ • SVD (k=64 latent)   │ • Cân bằng Độ chính xác │ • Đàm thoại đa lượt       │
   │ • MiniLM-L6 (384-d)   │   và Độ phong phú (λ)   │ • Tự động kích hoạt Tool  │
   │ • VADER Sentiment     │ • Đo lường ILD Index    │ • Phân tích Gamer Persona │
   └───────────────────────┴─────────────────────────┴───────────────────────────┘
 ```
 
-- ⚡ **Xử lý dữ liệu tốc độ cao với Polars (Rust Multi-threading):** Thuật toán Lọc K-Core ($k=5$) xử lý hàng triệu bản ghi trong chưa đầy 9 giây, xuất 3 tập dữ liệu Silver Parquet nén `zstd`.
-- 🎮 **Mô hình Gợi ý Lai Đa Luồng (Weighted Hybrid Fusion):** Kết hợp linh hoạt giữa Lọc cộng tác (Collaborative Filtering), Lọc theo nội dung ngữ nghĩa (Semantic Content-Based) và Điểm cảm xúc đánh giá (VADER Sentiment).
-- 🔍 **Giải thích đề xuất minh bạch (Multi-Signal Explainer):** Tự động phát hiện tựa game mỏ neo (*"Lấy cảm hứng từ: Skyrim (92%)"*), phân tích mức độ tương đồng cốt truyện và trích dẫn nhận xét thực tế từ người chơi.
-- 🧙‍♂️ **Phân tích chân dung game thủ (Gamer Persona & Analytics):** Tự động gán danh hiệu phong cách chơi (*Bậc Thầy Chiến Thuật, Thợ Săn Thử Thách, Chiến Binh Sinh Tồn...*) cùng biểu đồ phân bố rating $1\star \rightarrow 5\star$.
-- 🚀 **Kiến trúc Kép Chuẩn Production:** 
+- **Xử lý dữ liệu tốc độ cao với Polars (Rust Multi-threading):** Thuật toán Lọc K-Core ($k=5$) xử lý hàng triệu bản ghi trong chưa đầy 9 giây, xuất 3 tập dữ liệu Silver Parquet nén `zstd`.
+- **Mô hình Gợi ý Lai Đa Luồng (Weighted Hybrid Fusion):** Kết hợp linh hoạt giữa Lọc cộng tác (Collaborative Filtering), Lọc theo nội dung ngữ nghĩa (Semantic Content-Based) và Điểm cảm xúc đánh giá (VADER Sentiment).
+- **Giải thích đề xuất minh bạch (Multi-Signal Explainer):** Tự động phát hiện tựa game mỏ neo (*"Lấy cảm hứng từ: Skyrim (92%)"*), phân tích mức độ tương đồng cốt truyện và trích dẫn nhận xét thực tế từ người chơi.
+- **Phân tích chân dung game thủ (Gamer Persona & Analytics):** Tự động gán danh hiệu phong cách chơi (*Bậc Thầy Chiến Thuật, Thợ Săn Thử Thách, Chiến Binh Sinh Tồn...*) cùng biểu đồ phân bố rating $1\star \rightarrow 5\star$.
+- **Kiến trúc Kép Chuẩn Production:** 
   - **FastAPI Backend:** 11 RESTful endpoints chuẩn Pydantic v2, nạp mô hình Single-load siêu tốc vào RAM.
   - **Streamlit Web UI:** Giao diện Cyber Gaming Dark Mode, hỗ trợ 100% Tiếng Việt, hiển thị thẻ game và poster sống động.
 
 ---
 
-## 🏗️ 3. Kiến Trúc Hệ Thống (System Architecture)
+## 3. Kiến Trúc Hệ Thống (System Architecture)
 
 ```
                             AMAZON REVIEWS 2023 - VIDEO GAMES
@@ -107,7 +107,7 @@ Dự án được xây dựng dựa trên tập dữ liệu thực tế **Amazon
 
 ---
 
-## 📊 4. Thống Kê Dữ Liệu Sau Xử Lý (Data Lakehouse Telemetry)
+## 4. Thống Kê Dữ Liệu Sau Xử Lý (Data Lakehouse Telemetry)
 
 | Tầng Dữ Liệu | Đường Dẫn File | Dung Lượng | Số Lượng Bản Ghi | Đặc Điểm Kỹ Thuật |
 | :--- | :--- | :--- | :--- | :--- |
@@ -120,11 +120,11 @@ Dự án được xây dựng dựa trên tập dữ liệu thực tế **Amazon
 
 ---
 
-## 📈 5. Các Chỉ Số Đo Lường & Đánh Giá Hiệu Năng (Evaluation Metrics)
+## 5. Các Chỉ Số Đo Lường & Đánh Giá Hiệu Năng (Evaluation Metrics)
 
 Hệ thống được đánh giá toàn diện qua 4 nhóm chỉ số: **Độ chính xác dự đoán rating**, **Chất lượng thứ hạng đề xuất (Ranking Quality)**, **Độ đa dạng danh mục (Diversity)**, và **Hiệu năng thời gian thực (Latency)**.
 
-### 🎯 5.1. Nhóm Chỉ Số Độ Chính Xác Dự Đoán (Rating Prediction Error)
+### 5.1. Nhóm Chỉ Số Độ Chính Xác Dự Đoán (Rating Prediction Error)
 Đo lường sai số giữa điểm đánh giá dự đoán $\hat{r}_{ui}$ và điểm đánh giá thực tế $r_{ui}$ từ người chơi trên tập kiểm thử (Test Split $80/20$):
 
 $$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} (r_{ui} - \hat{r}_{ui})^2}, \quad \text{MAE} = \frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} |r_{ui} - \hat{r}_{ui}|$$
@@ -137,7 +137,7 @@ $$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} (r_{u
 
 ---
 
-### 🏆 5.2. Nhóm Chỉ Số Thứ Hạng Đề Xuất (Top-K Ranking Quality)
+### 5.2. Nhóm Chỉ Số Thứ Hạng Đề Xuất (Top-K Ranking Quality)
 Đo lường khả năng đưa các tựa game người dùng thực sự yêu thích lên vị trí đầu danh sách:
 
 - **Precision@K & Recall@K:** Tỷ lệ chính xác và độ bao phủ của danh mục $K$ game được gợi ý:
@@ -155,7 +155,7 @@ $$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} (r_{u
 
 ---
 
-### 🔀 5.3. Nhóm Chỉ Số Đa Dạng Hóa & Độ Phủ Kho (Diversity & Novelty)
+### 5.3. Nhóm Chỉ Số Đa Dạng Hóa & Độ Phủ Kho (Diversity & Novelty)
 Đo lường mức độ phá vỡ thiên lệch thể loại (Filter Bubble) khi kích hoạt thuật toán **MMR (Maximal Marginal Relevance)**:
 
 - **Intra-List Diversity (ILD):** Khoảng cách cosine trung bình giữa các cặp game trong danh sách gợi ý $R$:
@@ -170,7 +170,7 @@ $$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} (r_{u
 
 ---
 
-### ⚡ 5.4. Hiệu Năng Xử Lý Thời Gian Thực (Latency & Throughput Telemetry)
+### 5.4. Hiệu Năng Xử Lý Thời Gian Thực (Latency & Throughput Telemetry)
 
 | Hoạt Động / Tác Vụ | Công Nghệ Thực Thi | Thời Gian Trung Bình |
 | :--- | :--- | :---: |
@@ -182,7 +182,7 @@ $$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|} \sum_{(u,i) \in \mathcal{T}} (r_{u
 
 ---
 
-## 📁 6. Cấu Trúc Thư Mục Dự Án (Repository Structure)
+## 6. Cấu Trúc Thư Mục Dự Án (Repository Structure)
 
 ```text
 Recommendation_Systems/
@@ -218,9 +218,9 @@ Recommendation_Systems/
 
 ---
 
-## 🚀 7. Hướng Dẫn Cài Đặt & Khởi Chạy (Quick Start)
+## 7. Hướng Dẫn Cài Đặt & Khởi Chạy (Quick Start)
 
-### ⚙️ Bước 1: Cài đặt môi trường Python
+### Bước 1: Cài đặt môi trường Python
 > Yêu cầu: **Python $\ge$ 3.10** (Khuyến nghị Python 3.11).
 
 ```bash
@@ -240,11 +240,11 @@ pip install fastapi uvicorn streamlit
 
 ---
 
-### 🎮 Bước 2: Khởi chạy Giao diện Web Streamlit (Khuyên dùng)
+### Bước 2: Khởi chạy Giao diện Web Streamlit (Khuyên dùng)
 ```bash
 python main.py --mode ui
 ```
-🌐 **Mở trình duyệt truy cập:** `http://localhost:8501`
+**Mở trình duyệt truy cập:** `http://localhost:8501`
 
 **Trải nghiệm 3 phân hệ trực quan:**
 1. **Tab 1 - Gợi Ý Cá Nhân Hóa:** Chọn hồ sơ game thủ mẫu hoặc nhập User ID, xem thẻ Persona, tinh chỉnh số lượng game, bật/tắt chế độ đa dạng hóa MMR ($\lambda$) và xem thẻ game kèm điểm giải thích.
@@ -253,25 +253,25 @@ python main.py --mode ui
 
 ---
 
-### ⚡ Bước 3: Khởi chạy Máy chủ API RESTful (FastAPI Backend)
+### Bước 3: Khởi chạy Máy chủ API RESTful (FastAPI Backend)
 ```bash
 python main.py --mode api --port 8000
 ```
-- 📖 **OpenAPI Swagger UI (Tương tác trực tiếp):** `http://127.0.0.1:8000/docs`
-- 📚 **ReDoc Documentation:** `http://127.0.0.1:8000/redoc`
-- 🔍 **Kiểm tra sức khỏe hệ thống (Health Check):** `http://127.0.0.1:8000/health`
+- **OpenAPI Swagger UI (Tương tác trực tiếp):** `http://127.0.0.1:8000/docs`
+- **ReDoc Documentation:** `http://127.0.0.1:8000/redoc`
+- **Kiểm tra sức khỏe hệ thống (Health Check):** `http://127.0.0.1:8000/health`
 
 ---
 
-### 🧪 Bước 4: Chạy Toàn Bộ Kiểm Thử Tự Động (Test Suite)
+### Bước 4: Chạy Toàn Bộ Kiểm Thử Tự Động (Test Suite)
 ```bash
 python main.py --mode test
 ```
-> ✅ Thực thi đồng loạt toàn bộ bài test: **Unit Tests, API TestClient, UI Components và E2E Integration (19/19 Test Cases Passed 100%)**.
+> Thực thi đồng loạt toàn bộ bài test: **Unit Tests, API TestClient, UI Components và E2E Integration (19/19 Test Cases Passed 100%)**.
 
 ---
 
-## 📡 8. Danh Mục API Endpoints (FastAPI REST Backend)
+## 8. Danh Mục API Endpoints (FastAPI REST Backend)
 
 | Phương Thức | Endpoint | Mô Tả Chức Năng | Tham Số / Request Body Chính |
 | :---: | :--- | :--- | :--- |
@@ -289,7 +289,7 @@ python main.py --mode test
 
 ---
 
-## 👨‍💻 9. Tác Giả & Bản Quyền
+## 9. Tác Giả & Bản Quyền
 
 - **Tác giả:** Đoàn Quang Minh
 - **GitHub Repository:** [doanquangminh14/Recommendation_Systems](https://github.com/doanquangminh14/Recommendation_Systems)
